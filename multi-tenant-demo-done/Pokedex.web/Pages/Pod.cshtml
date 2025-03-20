@@ -1,0 +1,63 @@
+@page "pod/{podId:int}"
+@model Pokedex.web.Pages.Pod
+
+@{
+    ViewData["Title"] = @Model.PodId;
+}
+
+<input asp-for="Today">
+
+<h1 class="display-4">Pod @Model.PodId</h1>
+
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var admission in @Model.Admissions)
+    {
+        <div class="col">
+            @if (admission.IsFull)
+            {
+                <div class="card h-100">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="@admission.Image" class="img-fluid rounded-start" width="150px"/>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">Admission: @(admission.Name) for @admission.TrainerName</h5>
+                                <p class="card-text">From @admission.AdmissionStart until @admission.AdmissionEnd</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card h-100">
+                    <div class="card-body">
+                        <form class="mb-3" method="post">
+                            <label asp-for="TrainerName"></label>
+                            <input asp-for="TrainerName" class="form-control"/>
+
+                            <label asp-for="PokemonIndex"></label>
+                            <select class="form-select" asp-for="PokemonIndex">
+                                @foreach (var p in Model.Pokemons)
+                                {
+                                    <option value="@p.Index">@p.Name</option>
+                                }
+                            </select>
+
+                            <label asp-for="AdmissionStart"></label>
+                            <input class="form-control" asp-for="AdmissionStart">
+
+                            <label asp-for="AdmissionEnd"></label>
+                            <input class="form-control" asp-for="AdmissionEnd">
+
+                            <button type="submit" class="btn btn-primary">Admit</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+        
