@@ -35,8 +35,8 @@ public class ApplicationDbContext(
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
         //entity type configurations can't have constructor parameters, so we have to set the tenant id filter here
-        builder.Entity<PokemonAdmission>().HasQueryFilter(e => e.TenantId == tenantContext.Tenant.Id);
-        builder.Entity<HealingPod>().HasQueryFilter(e => e.TenantId == tenantContext.Tenant.Id);
+        // builder.Entity<PokemonAdmission>().HasQueryFilter(e => e.TenantId == tenantContext.Tenant.Id);
+        // builder.Entity<HealingPod>().HasQueryFilter(e => e.TenantId == tenantContext.Tenant.Id);
 
         // foreach (var entityType in builder.Model.GetEntityTypes())
         // {

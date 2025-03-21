@@ -4,7 +4,7 @@ using Pokedex.Framework.Tenants;
 
 namespace Pokedex.Data.Models;
 
-public class PokemonAdmission : ITenanted
+public class PokemonAdmission 
 {
     public int Id { get; set; }
     public Pokemon Pokemon { get; set; }
@@ -15,7 +15,6 @@ public class PokemonAdmission : ITenanted
 
     public HealingPod Pod { get; set; }
     public int PodId { get; set; }
-    public string TenantId { get; set; }
 }
 
 public class PokemonAdmissionEntityTypeConfiguration : IEntityTypeConfiguration<PokemonAdmission>
@@ -23,8 +22,8 @@ public class PokemonAdmissionEntityTypeConfiguration : IEntityTypeConfiguration<
     public void Configure(EntityTypeBuilder<PokemonAdmission> builder)
     {
         builder.HasKey(e => new { e.Id });
-        builder.HasIndex(e => e.TenantId);
-        builder.Property(e => e.TenantId).IsRequired();
-        builder.Property(e => e.TenantId).HasValueGenerator<TenantIdValueGenerator>();
+        // builder.HasIndex(e => e.TenantId);
+        // builder.Property(e => e.TenantId).IsRequired();
+        // builder.Property(e => e.TenantId).HasValueGenerator<TenantIdValueGenerator>();
     }
 }

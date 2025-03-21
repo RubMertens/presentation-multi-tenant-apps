@@ -14,6 +14,7 @@ public class MultiTenantMiddleware(
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         //subdomain based
+        
         var subDomain = context.Request.Host.Host.Split('.')[0];
         var matchingTenant = tenantConfiguration.Value.Tenants.FirstOrDefault(t => t.Id == subDomain);
         if (matchingTenant != null)
