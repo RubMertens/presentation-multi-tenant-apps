@@ -1,7 +1,7 @@
 namespace Pokedex.Framework.Tenants.DependencyInjection;
 
-public class ITenantContextAccessor
+public class TenantContextAccessor
 {
-    public ITenantContext TenantContext { get; set; }
+    public ITenantContext? TenantContext { get; set; }
 }
 

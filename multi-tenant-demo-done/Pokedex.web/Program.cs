@@ -19,14 +19,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     ;
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddScoped<ImportPokemonData>();
+builder.Services
+    .AddScoped<ImportPokemonData>()
+    .AddSingleton<ImportDefaultUsers>()
+    ;
 
 
 builder.Services
     .AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddUserStore<ApplicationUserStore>()
-    .AddSignInManager<MultiTenantSigninManager>()
     ;
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
@@ -56,6 +57,8 @@ using (var scope = app.Services.CreateScope())
     await scope.ServiceProvider.GetRequiredService<ImportPokemonData>().Import();
 }
 
+await app.Services.GetRequiredService<ImportDefaultUsers>().Import();
+
 
 app.UseHttpsRedirection();
 app.UseMiddleware<MultiTenantMiddleware>();
@@ -67,7 +70,8 @@ app.UseAuthorization();
 app.MapStaticAssets();
 app.MapRazorPages()
     .WithStaticAssets()
+    .RequireAuthorization()
     ;
-    // .RequireAuthorization();
+// .RequireAuthorization();
 
 app.Run();

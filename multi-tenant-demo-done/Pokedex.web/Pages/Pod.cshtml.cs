@@ -28,7 +28,6 @@ public class Pod(ApplicationDbContext context) : PageModel
 {
     [BindProperty(SupportsGet = true)] public DateTime Today { get; set; } = DateTime.Now;
     [BindProperty] public int PodId { get; set; }
-
     [BindProperty] public string TrainerName { get; set; }
     [BindProperty] public int PokemonIndex { get; set; }
     [BindProperty] public DateTime AdmissionStart { get; set; } = DateTime.Now;
@@ -37,10 +36,15 @@ public class Pod(ApplicationDbContext context) : PageModel
     public List<PokemonAdmissionViewModel> Admissions { get; set; }
     public List<PokemonEntryViewModel> Pokemons { get; set; }
 
-    public async Task OnGet(int podId)
+    public async Task<IActionResult> OnGet(int podId)
     {
         PodId = podId;
+        if (!await context.Pods.AnyAsync(p => p.Id == podId))
+            return RedirectToPage("Index");
+
         await BuildViewModels(podId);
+
+        return Page();
     }
 
     private async Task BuildViewModels(int podId)

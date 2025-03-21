@@ -8,22 +8,22 @@ using Pokedex.Framework.Tenants;
 
 namespace Pokedex.web.MultiTenancy.Identity;
 
-public class ApplicationUserStore(
-    ApplicationDbContext context,
-    ITenantContext tenantContext,
-    IdentityErrorDescriber? describer = null)
-    : UserStore<ApplicationUser>(context, describer)
-{
-    public override Task<IdentityResult> CreateAsync(ApplicationUser user,
-        CancellationToken cancellationToken = new CancellationToken())
-    {
-        if (tenantContext.Tenant == null)
-            return Task.FromResult(IdentityResult.Failed(new IdentityError
-                { Code = "TenantNotFound", Description = "Tenant not found" }));
-        user.TenantId = tenantContext.Tenant.Id;
-        return base.CreateAsync(user, cancellationToken);
-    }
-};
+// public class ApplicationUserStore(
+//     ApplicationDbContext context,
+//     ITenantContext tenantContext,
+//     IdentityErrorDescriber? describer = null)
+//     : UserStore<ApplicationUser>(context, describer)
+// {
+//     public override Task<IdentityResult> CreateAsync(ApplicationUser user,
+//         CancellationToken cancellationToken = new CancellationToken())
+//     {
+//         if (tenantContext.Tenant == null)
+//             return Task.FromResult(IdentityResult.Failed(new IdentityError
+//                 { Code = "TenantNotFound", Description = "Tenant not found" }));
+//         user.TenantId = tenantContext.Tenant.Id;
+//         return base.CreateAsync(user, cancellationToken);
+//     }
+// };
 
 public class MultiTenantSigninManager(
     UserManager<ApplicationUser> userManager,

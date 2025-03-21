@@ -11,27 +11,27 @@ using Microsoft.EntityFrameworkCore.ValueGeneration;
 using Microsoft.IdentityModel.Abstractions;
 using Pokedex.Data.Models;
 using Pokedex.Framework.Tenants;
+using Pokedex.Framework.Tenants.DependencyInjection;
 
 namespace Pokedex.Data;
 
 public class ApplicationDbContext(
     DbContextOptions<ApplicationDbContext> options,
-    ITenantContext tenantContext)
+    TenantContextAccessor tenantContextAccessor)
     : IdentityDbContext<ApplicationUser>(options)
 {
     public DbSet<HealingPod> Pods { get; set; }
     public DbSet<Pokemon> Pokemons { get; set; }
     public DbSet<PokemonAdmission> Admissions { get; set; }
 
-
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
         //entity type configurations can't have constructor parameters, so we have to set the tenant id filter here
-        builder.Entity<ApplicationUser>().HasQueryFilter(e => e.TenantId == tenantContext.Tenant.Id);
-        builder.Entity<PokemonAdmission>().HasQueryFilter(e => e.TenantId == tenantContext.Tenant.Id);
-        builder.Entity<HealingPod>().HasQueryFilter(e => e.TenantId == tenantContext.Tenant.Id);
+        builder.Entity<ApplicationUser>().HasQueryFilter(e => e.TenantId == GetTenantId());
+        builder.Entity<PokemonAdmission>().HasQueryFilter(e => e.TenantId == GetTenantId());
+        builder.Entity<HealingPod>().HasQueryFilter(e => e.TenantId == GetTenantId());
 
         // foreach (var entityType in builder.Model.GetEntityTypes())
         // {
@@ -45,18 +45,18 @@ public class ApplicationDbContext(
         base.OnModelCreating(builder);
     }
 
-    private LambdaExpression GetTenantFilterExpression(Type entityType)
-    {
-        var param = Expression.Parameter(entityType, "e");
-        var prop = Expression.Property(Expression.Convert(param, typeof(ITenanted)), nameof(ITenanted.TenantId));
-        var tenantConst = Expression.Constant(tenantContext?.Tenant?.Id ?? string.Empty);
-        var body = Expression.Equal(prop, tenantConst);
-        return Expression.Lambda(body, param);
-    }
+    // private LambdaExpression GetTenantFilterExpression(Type entityType)
+    // {
+    //     var param = Expression.Parameter(entityType, "e");
+    //     var prop = Expression.Property(Expression.Convert(param, typeof(ITenanted)), nameof(ITenanted.TenantId));
+    //     var tenantConst = Expression.Constant(tenantContext?.Tenant?.Id ?? string.Empty);
+    //     var body = Expression.Equal(prop, tenantConst);
+    //     return Expression.Lambda(body, param);
+    // }
 
-    internal string GetTenantId()
+    internal string? GetTenantId()
     {
-        return tenantContext.Tenant.Id;
+        return tenantContextAccessor.TenantContext?.Tenant?.Id;
     }
 }
 
@@ -66,7 +66,10 @@ class TenantIdValueGenerator : ValueGenerator<string>
     {
         if (entry.Context is ApplicationDbContext context)
         {
-            return context.GetTenantId();
+            var tenantId = context.GetTenantId();
+            if (tenantId == null)
+                throw new InvalidOperationException("TenantId is exptected to be set on this entity!");
+            return tenantId;
         }
 
         return string.Empty;

@@ -15,6 +15,7 @@ public class IndexModel(
     private readonly ILogger<IndexModel> _logger = logger;
 
     public string Tenant { get; } = tenantContext.Tenant.Name;
+    public string Background { get; set; } = tenantContext.Tenant.Background;
 
     public void OnGet()
     {
