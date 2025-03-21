@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Pokedex.Framework.Tenants;
 using Pokedex.Framework.Tenants.DependencyInjection;
 
-namespace Pokedex.web.Pages;
-
+namespace PokeCenter.web.Pages;
 
 public class IndexModel(
     ILogger<IndexModel> logger,

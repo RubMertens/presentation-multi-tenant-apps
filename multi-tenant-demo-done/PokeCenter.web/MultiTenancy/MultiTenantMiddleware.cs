@@ -5,7 +5,7 @@ using Pokedex.Framework.Tenants;
 using Pokedex.Framework.Tenants.DependencyInjection;
 using Pokedex.Framework.Tenants.Options;
 
-namespace Pokedex.web.MultiTenancy;
+namespace PokeCenter.web.MultiTenancy;
 
 public class MultiTenantMiddleware(
     TenantContextAccessor tenantContextAccessor,

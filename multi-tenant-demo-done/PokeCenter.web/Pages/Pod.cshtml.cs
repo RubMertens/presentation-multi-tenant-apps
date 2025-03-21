@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Pokedex.Data;
 using Pokedex.Data.Models;
 
-namespace Pokedex.web.Pages;
+namespace PokeCenter.web.Pages;
 
 public record PokemonAdmissionViewModel
 {

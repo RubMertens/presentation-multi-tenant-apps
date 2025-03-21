@@ -4,6 +4,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>Pokedex.Data</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -18,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Pokedex.Framework\Pokedex.Framework.csproj" />
+      <ProjectReference Include="..\PokeCenter.Framework\PokeCenter.Framework.csproj" />
     </ItemGroup>
 
 </Project>

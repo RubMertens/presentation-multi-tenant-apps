@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Pokedex.Data;
+using Pokedex.Data.Models;
 using Pokedex.Framework.Tenants;
 using Pokedex.Framework.Tenants.DependencyInjection;
 using Pokedex.Framework.Tenants.Options;
 
-namespace Pokedex.web;
+namespace PokeCenter.web;
 
 public class ImportDefaultUsers(IServiceProvider provider)
 {

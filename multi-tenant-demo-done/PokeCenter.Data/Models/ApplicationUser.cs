@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
-using Pokedex.Data.Models;
 
-namespace Pokedex.Data;
+namespace Pokedex.Data.Models;
 
 public class ApplicationUser : IdentityUser, ITenanted
 {

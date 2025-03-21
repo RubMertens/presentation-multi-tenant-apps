@@ -5,9 +5,7 @@ using Pokedex.Data;
 using Pokedex.Data.Models;
 using Pokedex.Framework.Tenants;
 
-namespace Pokedex.web;
-
-
+namespace PokeCenter.web;
 
 public class ImportPokemonData(ApplicationDbContext context)
 {

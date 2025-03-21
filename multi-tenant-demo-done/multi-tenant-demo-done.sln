@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pokedex.web", "Pokedex.web\Pokedex.web.csproj", "{074E508F-740C-41E4-9129-023FFF9E4620}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokeCenter.web", "PokeCenter.web\PokeCenter.web.csproj", "{074E508F-740C-41E4-9129-023FFF9E4620}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pokedex.Data", "Pokedex.Data\Pokedex.Data.csproj", "{7DB565EF-1A67-4A83-A12B-0A4CF7D1356C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokeCenter.Data", "PokeCenter.Data\PokeCenter.Data.csproj", "{7DB565EF-1A67-4A83-A12B-0A4CF7D1356C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pokedex.Framework", "Pokedex.Framework\Pokedex.Framework.csproj", "{E6C4DB18-FF09-4DFE-A265-F781397B1042}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokeCenter.Framework", "PokeCenter.Framework\PokeCenter.Framework.csproj", "{E6C4DB18-FF09-4DFE-A265-F781397B1042}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

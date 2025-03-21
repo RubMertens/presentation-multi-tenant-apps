@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pokedex.Data;
 
@@ -11,9 +12,11 @@ using Pokedex.Data;
 namespace Pokedex.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250321131030_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -159,7 +162,7 @@ namespace Pokedex.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Pokedex.Data.ApplicationUser", b =>
+            modelBuilder.Entity("PokeCenter.Data.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -228,7 +231,7 @@ namespace Pokedex.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Pokedex.Data.Models.HealingPod", b =>
+            modelBuilder.Entity("PokeCenter.Data.Models.HealingPod", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -250,7 +253,7 @@ namespace Pokedex.Data.Migrations
                     b.ToTable("Pods");
                 });
 
-            modelBuilder.Entity("Pokedex.Data.Models.Pokemon", b =>
+            modelBuilder.Entity("PokeCenter.Data.Models.Pokemon", b =>
                 {
                     b.Property<int>("Index")
                         .HasColumnType("int");
@@ -264,7 +267,7 @@ namespace Pokedex.Data.Migrations
                     b.ToTable("Pokemons");
                 });
 
-            modelBuilder.Entity("Pokedex.Data.Models.PokemonAdmission", b =>
+            modelBuilder.Entity("PokeCenter.Data.Models.PokemonAdmission", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -314,7 +317,7 @@ namespace Pokedex.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Pokedex.Data.ApplicationUser", null)
+                    b.HasOne("PokeCenter.Data.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -323,7 +326,7 @@ namespace Pokedex.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Pokedex.Data.ApplicationUser", null)
+                    b.HasOne("PokeCenter.Data.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -338,7 +341,7 @@ namespace Pokedex.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Pokedex.Data.ApplicationUser", null)
+                    b.HasOne("PokeCenter.Data.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -347,22 +350,22 @@ namespace Pokedex.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Pokedex.Data.ApplicationUser", null)
+                    b.HasOne("PokeCenter.Data.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Pokedex.Data.Models.PokemonAdmission", b =>
+            modelBuilder.Entity("PokeCenter.Data.Models.PokemonAdmission", b =>
                 {
-                    b.HasOne("Pokedex.Data.Models.HealingPod", "Pod")
+                    b.HasOne("PokeCenter.Data.Models.HealingPod", "Pod")
                         .WithMany("Admission")
                         .HasForeignKey("PodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Pokedex.Data.Models.Pokemon", "Pokemon")
+                    b.HasOne("PokeCenter.Data.Models.Pokemon", "Pokemon")
                         .WithMany()
                         .HasForeignKey("PokemonId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -373,7 +376,7 @@ namespace Pokedex.Data.Migrations
                     b.Navigation("Pokemon");
                 });
 
-            modelBuilder.Entity("Pokedex.Data.Models.HealingPod", b =>
+            modelBuilder.Entity("PokeCenter.Data.Models.HealingPod", b =>
                 {
                     b.Navigation("Admission");
                 });

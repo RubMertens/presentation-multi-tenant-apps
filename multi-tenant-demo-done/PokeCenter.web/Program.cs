@@ -2,8 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Pokedex.Data;
 using Pokedex.Framework.Tenants.DependencyInjection;
 using Pokedex.Framework.Tenants.Options;
-using Pokedex.web;
-using Pokedex.web.MultiTenancy;
+using PokeCenter.web;
+using PokeCenter.web.MultiTenancy;
+using Pokedex.Data.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -19,8 +19,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Pokedex.Data\Pokedex.Data.csproj"/>
-        <ProjectReference Include="..\Pokedex.Framework\Pokedex.Framework.csproj" />
+        <ProjectReference Include="..\PokeCenter.Data\PokeCenter.Data.csproj" />
+        <ProjectReference Include="..\PokeCenter.Framework\PokeCenter.Framework.csproj" />
     </ItemGroup>
 
     <ItemGroup>
