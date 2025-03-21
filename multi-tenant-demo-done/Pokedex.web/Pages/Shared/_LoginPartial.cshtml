@@ -1,6 +1,5 @@
 ﻿@using Pokedex.Data
-@using Pokedex.web.MultiTenancy.Identity
-@inject MultiTenantSigninManager SignInManager
+@inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
 <ul class="navbar-nav">

@@ -26,13 +26,14 @@ public class Pods(ApplicationDbContext context) : PageModel
 
     private async Task LoadViewModel()
     {
+        var now = DateTime.Now;
         ViewModel = await context.Pods
             .Select(p => new PodViewModel
             {
                 Id = p.Id,
                 MaxCapacity = p.MaxCapacity,
                 CurrentCapacity = p.Admission
-                    .Count(a => a.AdmissionEnd > DateTime.Now && a.AdmissionStart < DateTime.Now)
+                    .Count(a => a.AdmissionStart <= now && a.AdmissionEnd >= now)
             }).ToArrayAsync();
     }
 

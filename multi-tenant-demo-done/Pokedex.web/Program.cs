@@ -1,11 +1,9 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Pokedex.Data;
 using Pokedex.Framework.Tenants.DependencyInjection;
 using Pokedex.Framework.Tenants.Options;
 using Pokedex.web;
 using Pokedex.web.MultiTenancy;
-using Pokedex.web.MultiTenancy.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
