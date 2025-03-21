@@ -57,7 +57,8 @@ namespace Pokedex.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    MaxCapacity = table.Column<int>(type: "int", nullable: false)
+                    MaxCapacity = table.Column<int>(type: "int", nullable: false),
+                    TenantId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -192,7 +193,8 @@ namespace Pokedex.Data.Migrations
                     AdmissionStart = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AdmissionEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Trainer = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PodId = table.Column<int>(type: "int", nullable: false)
+                    PodId = table.Column<int>(type: "int", nullable: false),
+                    TenantId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -220,6 +222,11 @@ namespace Pokedex.Data.Migrations
                 name: "IX_Admissions_PokemonId",
                 table: "Admissions",
                 column: "PokemonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Admissions_TenantId",
+                table: "Admissions",
+                column: "TenantId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -259,6 +266,11 @@ namespace Pokedex.Data.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Pods_TenantId",
+                table: "Pods",
+                column: "TenantId");
         }
 
         /// <inheritdoc />

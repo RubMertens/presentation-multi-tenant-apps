@@ -12,8 +12,8 @@ using Pokedex.Data;
 namespace Pokedex.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250321125929_init")]
-    partial class init
+    [Migration("20250321131038_update")]
+    partial class update
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -242,7 +242,13 @@ namespace Pokedex.Data.Migrations
                     b.Property<int>("MaxCapacity")
                         .HasColumnType("int");
 
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("Pods");
                 });
@@ -281,6 +287,10 @@ namespace Pokedex.Data.Migrations
                     b.Property<int>("PokemonId")
                         .HasColumnType("int");
 
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Trainer")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -290,6 +300,8 @@ namespace Pokedex.Data.Migrations
                     b.HasIndex("PodId");
 
                     b.HasIndex("PokemonId");
+
+                    b.HasIndex("TenantId");
 
                     b.ToTable("Admissions");
                 });

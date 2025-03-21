@@ -2,7 +2,6 @@
 using System.Linq.Expressions;
 using System.Security.Cryptography.Xml;
 using System.Threading.RateLimiting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -14,11 +13,6 @@ using Pokedex.Data.Models;
 using Pokedex.Framework.Tenants;
 
 namespace Pokedex.Data;
-
-public class ApplicationUser : IdentityUser, ITenanted
-{
-    public string TenantId { get; set; }
-}
 
 public class ApplicationDbContext(
     DbContextOptions<ApplicationDbContext> options,
@@ -35,8 +29,9 @@ public class ApplicationDbContext(
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
         //entity type configurations can't have constructor parameters, so we have to set the tenant id filter here
-        // builder.Entity<PokemonAdmission>().HasQueryFilter(e => e.TenantId == tenantContext.Tenant.Id);
-        // builder.Entity<HealingPod>().HasQueryFilter(e => e.TenantId == tenantContext.Tenant.Id);
+        builder.Entity<ApplicationUser>().HasQueryFilter(e => e.TenantId == tenantContext.Tenant.Id);
+        builder.Entity<PokemonAdmission>().HasQueryFilter(e => e.TenantId == tenantContext.Tenant.Id);
+        builder.Entity<HealingPod>().HasQueryFilter(e => e.TenantId == tenantContext.Tenant.Id);
 
         // foreach (var entityType in builder.Model.GetEntityTypes())
         // {
