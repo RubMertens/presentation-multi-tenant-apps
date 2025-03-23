@@ -33,26 +33,9 @@ public class ApplicationDbContext(
         builder.Entity<PokemonAdmission>().HasQueryFilter(e => e.TenantId == GetTenantId());
         builder.Entity<HealingPod>().HasQueryFilter(e => e.TenantId == GetTenantId());
 
-        // foreach (var entityType in builder.Model.GetEntityTypes())
-        // {
-        //     if (typeof(ITenanted).IsAssignableFrom(entityType.ClrType))
-        //     {
-        //         builder.Entity(entityType.ClrType)
-        //             .HasQueryFilter(GetTenantFilterExpression(entityType.ClrType));
-        //     }
-        // }
-
         base.OnModelCreating(builder);
     }
 
-    // private LambdaExpression GetTenantFilterExpression(Type entityType)
-    // {
-    //     var param = Expression.Parameter(entityType, "e");
-    //     var prop = Expression.Property(Expression.Convert(param, typeof(ITenanted)), nameof(ITenanted.TenantId));
-    //     var tenantConst = Expression.Constant(tenantContext?.Tenant?.Id ?? string.Empty);
-    //     var body = Expression.Equal(prop, tenantConst);
-    //     return Expression.Lambda(body, param);
-    // }
 
     internal string? GetTenantId()
     {
