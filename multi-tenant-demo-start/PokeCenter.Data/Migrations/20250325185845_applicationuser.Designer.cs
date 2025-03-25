@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pokedex.Data;
 
@@ -11,9 +12,11 @@ using Pokedex.Data;
 namespace Pokedex.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250325185845_applicationuser")]
+    partial class applicationuser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -239,13 +242,7 @@ namespace Pokedex.Data.Migrations
                     b.Property<int>("MaxCapacity")
                         .HasColumnType("int");
 
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("TenantId");
 
                     b.ToTable("Pods");
                 });
@@ -284,10 +281,6 @@ namespace Pokedex.Data.Migrations
                     b.Property<int>("PokemonId")
                         .HasColumnType("int");
 
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("Trainer")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -297,8 +290,6 @@ namespace Pokedex.Data.Migrations
                     b.HasIndex("PodId");
 
                     b.HasIndex("PokemonId");
-
-                    b.HasIndex("TenantId");
 
                     b.ToTable("Admissions");
                 });

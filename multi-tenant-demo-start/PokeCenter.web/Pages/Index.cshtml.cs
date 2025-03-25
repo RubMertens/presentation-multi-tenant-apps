@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace PokeCenter.web.Pages;
 
+[AllowAnonymous]
 public class IndexModel(
     ILogger<IndexModel> logger
 ) : PageModel

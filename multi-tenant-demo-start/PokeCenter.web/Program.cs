@@ -1,8 +1,12 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 using Pokedex.Data;
 using PokeCenter.web;
+using PokeCenter.web.Identities;
+using PokeCenter.web.Middleware;
 using Pokedex.Data.Models;
+using Pokedex.Framework;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,10 +24,16 @@ builder.Services
     .AddScoped<ImportPokemonData>()
     ;
 
+builder.Services
+    .AddTenantContext()
+    .AddScoped<TenantMiddleware>();
+
 
 builder.Services
-    .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddUserStore<ApplicationUserStore>()
+    .AddSignInManager<MultiTenantSigninManager>()
     ;
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
@@ -43,15 +53,15 @@ else
 }
 
 
-using (var scope = app.Services.CreateScope())
-{
-    await scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.MigrateAsync();
-    await scope.ServiceProvider.GetRequiredService<ImportPokemonData>().Import();
-}
+// using (var scope = app.Services.CreateScope())
+// {
+//     await scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.MigrateAsync();
+//     await scope.ServiceProvider.GetRequiredService<ImportPokemonData>().Import();
+// }
 
 
 app.UseHttpsRedirection();
-
+app.UseMiddleware<TenantMiddleware>();
 app.UseRouting();
 
 app.UseAuthorization();
@@ -61,6 +71,5 @@ app.MapRazorPages()
     .WithStaticAssets()
     .RequireAuthorization()
     ;
-// .RequireAuthorization();
 
 app.Run();

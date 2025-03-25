@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Pokedex.Data;
 using Pokedex.Data.Models;
+using Pokedex.Framework;
 
 namespace PokeCenter.web.Pages;
 
@@ -13,7 +14,7 @@ public record PodViewModel
     public int CurrentCapacity { get; set; }
 }
 
-public class Pods(ApplicationDbContext context) : PageModel
+public class Pods(ApplicationDbContext context, Tenant tenant) : PageModel
 {
     public PodViewModel[] ViewModel { get; set; }
 
@@ -46,7 +47,11 @@ public class Pods(ApplicationDbContext context) : PageModel
             return Page();
         }
 
-        var pod = new HealingPod { MaxCapacity = MaxCapacity };
+        var pod = new HealingPod
+        {
+            MaxCapacity = MaxCapacity,
+            // TenantId = tenant.Id
+        };
         context.Pods.Add(pod);
         await context.SaveChangesAsync();
         return RedirectToPage();
