@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Pokedex.Data;
 using Pokedex.Data.Models;
-using Pokedex.Framework;
 
 namespace PokeCenter.web.Pages;
 
@@ -14,7 +13,7 @@ public record PodViewModel
     public int CurrentCapacity { get; set; }
 }
 
-public class Pods(ApplicationDbContext context, Tenant tenant) : PageModel
+public class Pods(ApplicationDbContext context) : PageModel
 {
     public PodViewModel[] ViewModel { get; set; }
 

@@ -4,12 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Pokedex.Data.Models;
 
-public class HealingPod : ITenanted
+public class HealingPod 
 {
     public int Id { get; set; }
     public int MaxCapacity { get; set; }
     public List<PokemonAdmission> Admission { get; set; }
-    public string TenantId { get; set; }
 }
 
 public class HealingPodEntityTypeConfiguration : IEntityTypeConfiguration<HealingPod>
@@ -17,11 +16,5 @@ public class HealingPodEntityTypeConfiguration : IEntityTypeConfiguration<Healin
     public void Configure(EntityTypeBuilder<HealingPod> builder)
     {
         builder.HasKey(e => new { e.Id });
-
-        // builder.Property(e => e.TenantId).IsRequired()
-        //     .HasValueGenerator<TenantIdValueGenerator>()
-        //     ;
-        // builder.HasIndex(e => e.TenantId);
-        
     }
 }
