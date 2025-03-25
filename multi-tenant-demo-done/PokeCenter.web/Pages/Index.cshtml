@@ -1,0 +1,13 @@
+﻿@page
+@using Pokedex.Framework
+@model PokeCenter.web.Pages.IndexModel
+@inject Tenant Tenant
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome @Tenant.Name</h1>
+    <img src="@Tenant.CityImage"/>
+</div>
+
