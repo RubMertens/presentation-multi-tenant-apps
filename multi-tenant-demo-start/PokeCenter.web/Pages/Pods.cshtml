@@ -7,15 +7,6 @@
 
 <h1 class="display-4">Healing pods</h1>
 
-<div class="list-group">
-    @foreach (var pod in @Model.ViewModel)
-    {
-        <a asp-page="Pod" asp-route-podId="@pod.Id"
-           class="list-group-item list-group-item-action">@pod.Id (@pod.CurrentCapacity/@pod.MaxCapacity)
-        </a>
-    }
-</div>
-
 <form method="post">
     <div class="mb-3">
         <label class="form-label" asp-for="MaxCapacity">Max capacity of bay</label>
@@ -23,3 +14,32 @@
     </div>
     <button type="submit" class="btn btn-primary">Create pod</button>
 </form>
+
+<hr>
+<div class="list-group">
+    @foreach (var pod in @Model.ViewModel)
+    {
+        <a asp-page="Pod" asp-route-podId="@pod.Id"
+           class="list-group-item list-group-item-action">
+
+            @pod.Id
+            <div class="d-flex">
+                @for (var i = 0; i < pod.CurrentCapacity; i++)
+                {
+                    <div class="border border-black rounded-circle m-1">
+                        <img style="height: 36px; width:36px;"
+                             src="https://archives.bulbagarden.net/media/upload/0/00/Bag_Pok%C3%A9_Ball_SV_Sprite.png"/>
+                    </div>
+                }
+                @for (var i = pod.CurrentCapacity; i < pod.MaxCapacity; i++)
+                {
+                    <div class="border border-black rounded-circle m-1 h1" style="width:36px; height: 36px;">
+
+                    </div>
+                }
+
+            </div>
+
+        </a>
+    }
+</div>
