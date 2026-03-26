@@ -13,7 +13,7 @@
   --gb-text:          #1a1e2e;
   --gb-text-dim:      #4a5060;
   --gb-text-muted:    #7a808e;
-  --tenant-color:     #1a8a78;  /* overridden by inline style block */
+  --tenant-color:     var(--gb-border);  /* overridden by inline style block */
   --tenant-dark:      #1a1e2e;  /* dark text on accent */
   --font-pixel:       'Press Start 2P', 'Courier New', monospace;
   --shadow-hard:      4px 4px 0 rgba(0,0,0,0.15);
