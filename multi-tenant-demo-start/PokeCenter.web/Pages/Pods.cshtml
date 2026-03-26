@@ -5,41 +5,48 @@
     ViewData["Title"] = "Healing Pods";
 }
 
-<h1 class="display-4">Healing pods</h1>
+<div class="gb-page-header">
+    <h1 class="gb-page-title">HEALING PODS</h1>
+</div>
 
-<form method="post">
-    <div class="mb-3">
-        <label class="form-label" asp-for="MaxCapacity">Max capacity of bay</label>
-        <input class="form-control" asp-for="MaxCapacity">
-    </div>
-    <button type="submit" class="btn btn-primary">Create pod</button>
-</form>
+@foreach (var pod in @Model.ViewModel)
+{
+    <a asp-page="Pod" asp-route-podId="@pod.Id" class="gb-pod-entry">
 
-<hr>
-<div class="list-group">
-    @foreach (var pod in @Model.ViewModel)
-    {
-        <a asp-page="Pod" asp-route-podId="@pod.Id"
-           class="list-group-item list-group-item-action">
+        <div class="gb-pod-id-badge">POD #@pod.Id</div>
 
-            @pod.Id
-            <div class="d-flex">
+        <div class="gb-pod-capacity-area">
+            <span class="gb-capacity-label">CAPACITY</span>
+            <div class="gb-pokeball-row">
                 @for (var i = 0; i < pod.CurrentCapacity; i++)
                 {
-                    <div class="border border-black rounded-circle m-1">
-                        <img style="height: 36px; width:36px;"
-                             src="https://archives.bulbagarden.net/media/upload/0/00/Bag_Pok%C3%A9_Ball_SV_Sprite.png"/>
+                    <div class="gb-pokeball filled">
+                        <img src="https://archives.bulbagarden.net/media/upload/0/00/Bag_Pok%C3%A9_Ball_SV_Sprite.png"
+                             alt="occupied"/>
                     </div>
                 }
                 @for (var i = pod.CurrentCapacity; i < pod.MaxCapacity; i++)
                 {
-                    <div class="border border-black rounded-circle m-1 h1" style="width:36px; height: 36px;">
-
-                    </div>
+                    <div class="gb-pokeball empty"></div>
                 }
-
             </div>
+        </div>
 
-        </a>
-    }
+        <div class="gb-capacity-text">@pod.CurrentCapacity / @pod.MaxCapacity</div>
+
+    </a>
+}
+
+<div class="gb-create-panel">
+    <div class="gb-create-panel-header">+ NEW HEALING POD</div>
+    <div class="gb-create-panel-body">
+        <form method="post" class="d-flex align-items-end gap-3 flex-wrap w-100">
+            <div class="field-group">
+                <label asp-for="MaxCapacity">MAX CAPACITY</label>
+                <input class="form-control" asp-for="MaxCapacity"/>
+                <span asp-validation-for="MaxCapacity" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">CREATE POD</button>
+        </form>
+    </div>
 </div>

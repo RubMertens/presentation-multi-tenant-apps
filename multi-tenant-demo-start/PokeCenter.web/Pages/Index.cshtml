@@ -1,10 +1,28 @@
-﻿@page
+@page
+@using Pokedex.Framework
 @model PokeCenter.web.Pages.IndexModel
+
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome </h1>
-</div>
+<div class="gb-start-screen">
 
+    <div class="gb-city-frame">
+        
+    </div>
+
+    <div class="gb-title-block">
+        <div class="gb-title-main">POKECENTER</div>
+        <div class="gb-title-sub"></div>
+    </div>
+
+    <div class="gb-menu-links">
+        <a asp-page="/Pods" class="gb-menu-item">
+            <span class="gb-arrow">▶</span> HEALING PODS
+        </a>
+    </div>
+
+    <div class="gb-copyright">MULTI-TENANT DEMO &nbsp;—&nbsp;</div>
+
+</div>

@@ -48,7 +48,7 @@ public class Pods(ApplicationDbContext context) : PageModel
 
         var pod = new HealingPod
         {
-            MaxCapacity = MaxCapacity,
+            MaxCapacity = MaxCapacity
         };
         context.Pods.Add(pod);
         await context.SaveChangesAsync();

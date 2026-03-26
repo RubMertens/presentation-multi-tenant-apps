@@ -1,31 +1,715 @@
+/* ============================================
+   POKECENTER — RETRO GAME BOY LIGHT STYLESHEET
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+  --gb-bg:            #e0e4e8;
+  --gb-screen:        #eaecf0;
+  --gb-panel:         #f4f5f7;
+  --gb-border:        #b8bcc4;
+  --gb-border-bright: #9098a4;
+  --gb-text:          #1a1e2e;
+  --gb-text-dim:      #4a5060;
+  --gb-text-muted:    #7a808e;
+  --tenant-color:     #1a8a78;  /* overridden by inline style block */
+  --tenant-dark:      #1a1e2e;  /* dark text on accent */
+  --font-pixel:       'Press Start 2P', 'Courier New', monospace;
+  --shadow-hard:      4px 4px 0 rgba(0,0,0,0.15);
+  --shadow-hard-sm:   2px 2px 0 rgba(0,0,0,0.12);
+}
+
+/* ============ RESET ============ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
 html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
+  font-size: 16px;
   min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+  font-family: var(--font-pixel);
+  background-color: var(--gb-bg);
+  color: var(--gb-text);
+  margin: 0;
+  padding: 0 0 60px 0;
+  min-height: 100vh;
+  line-height: 1.8;
+  overflow-x: hidden;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* ============ BACKGROUND LAYERS ============ */
+
+.city-bg {
+  position: fixed;
+  inset: 0;
+  background-image: var(--tenant-city-image);
+  background-size: 50%;
+  background-position: center 70%;
+  background-repeat: no-repeat;
+  opacity: 0.06;
+  z-index: 0;
+  pointer-events: none;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.gb-scanlines {
+  position: fixed;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,0,0,0.03) 3px,
+    rgba(0,0,0,0.03) 4px
+  );
+  z-index: 1;
+  pointer-events: none;
 }
+
+header, .gb-content, .gb-footer { position: relative; z-index: 2; }
+
+/* ============ TYPOGRAPHY ============ */
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: var(--font-pixel);
+  color: var(--gb-text);
+  text-shadow: var(--shadow-hard-sm);
+  line-height: 1.6;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+}
+
+h1, .h1, .display-4 { font-size: 1.5rem !important; }
+h2, .h2             { font-size: 1.2rem; }
+h3, .h3             { font-size: 1rem; }
+h4, .h4             { font-size: 0.9rem; }
+h5, .h5, .card-title { font-size: 0.85rem !important; }
+h6, .h6             { font-size: 0.75rem; }
+
+p {
+  font-family: var(--font-pixel);
+  font-size: 0.8rem;
+  line-height: 2.2;
+}
+
+a {
+  color: var(--tenant-color);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--gb-text);
+  text-decoration: none;
+}
+
+/* ============ NAVBAR ============ */
+
+.gb-navbar {
+  background-color: var(--gb-panel);
+  border-bottom: 4px solid var(--tenant-color);
+  padding: 0.85rem 0;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.gb-navbar .container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.gb-brand {
+  font-family: var(--font-pixel);
+  font-size: 1rem;
+  color: var(--gb-text) !important;
+  text-decoration: none !important;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 0 var(--tenant-color);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.gb-brand:hover { color: var(--gb-text) !important; text-shadow: 2px 2px 0 var(--tenant-color), 0 0 12px var(--tenant-color); }
+
+.gb-logo-icon {
+  display: inline-block;
+  animation: logo-pulse 2.5s ease-in-out infinite;
+}
+@keyframes logo-pulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:.6; transform:scale(1.15); }
+}
+
+.gb-nav-links { display: flex; gap: 0.4rem; flex-grow: 1; }
+
+.gb-nav-link {
+  font-family: var(--font-pixel);
+  font-size: 0.75rem;
+  color: var(--gb-text-dim) !important;
+  text-decoration: none !important;
+  padding: 0.45rem 0.8rem;
+  border: 2px solid transparent;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.gb-nav-link:hover {
+  color: var(--gb-text) !important;
+  border-color: var(--tenant-color);
+  background: var(--gb-screen);
+  text-shadow: none;
+}
+
+.gb-nav-auth { margin-left: auto; }
+.gb-nav-auth a,
+.gb-nav-auth .nav-link {
+  font-family: var(--font-pixel) !important;
+  font-size: 0.6rem !important;
+  color: var(--gb-text-dim) !important;
+  text-decoration: none;
+}
+.gb-nav-auth a:hover,
+.gb-nav-auth .nav-link:hover { color: var(--tenant-color) !important; }
+
+/* ============ FOOTER ============ */
+
+.gb-footer {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 10;
+  background: var(--gb-panel);
+  border-top: 3px solid var(--tenant-color);
+  padding: 0.55rem 0;
+  text-align: center;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
+}
+.gb-footer span {
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+  color: var(--gb-text-muted);
+  letter-spacing: 2px;
+}
+
+/* ============ MAIN CONTENT ============ */
+
+.gb-content { padding-top: 2rem; padding-bottom: 2rem; }
+
+/* ============ BUTTONS ============ */
+
+.btn,
+button[type="submit"],
+input[type="submit"] {
+  font-family: var(--font-pixel) !important;
+  font-size: 0.75rem !important;
+  border-radius: 0 !important;
+  border: 3px solid var(--gb-text) !important;
+  background-color: var(--gb-panel) !important;
+  color: var(--gb-text) !important;
+  padding: 0.65rem 1.2rem !important;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  box-shadow: var(--shadow-hard);
+  cursor: pointer;
+  transition: none;
+  display: inline-block;
+  position: relative;
+}
+.btn:hover,
+button[type="submit"]:hover {
+  background-color: var(--tenant-color) !important;
+  color: var(--tenant-dark) !important;
+  border-color: var(--tenant-color) !important;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+  transform: translate(2px,2px);
+}
+.btn:active,
+button[type="submit"]:active {
+  box-shadow: none !important;
+  transform: translate(4px,4px) !important;
+}
+.btn:focus { box-shadow: 0 0 0 3px var(--tenant-color) !important; }
+
+.btn-secondary {
+  border-color: var(--gb-border-bright) !important;
+  color: var(--gb-text-dim) !important;
+}
+.btn-secondary:hover {
+  background-color: var(--gb-border-bright) !important;
+  color: #fff !important;
+}
+
+/* ============ FORM CONTROLS ============ */
+
+.form-control,
+.form-select,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="datetime-local"],
+input[type="date"],
+select,
+textarea {
+  font-family: var(--font-pixel) !important;
+  font-size: 0.75rem !important;
+  background-color: var(--gb-panel) !important;
+  border: 2px solid var(--gb-border) !important;
+  border-radius: 0 !important;
+  color: var(--gb-text) !important;
+  padding: 0.65rem 0.9rem !important;
+  box-shadow: inset 2px 2px 0 rgba(0,0,0,0.06) !important;
+}
+.form-control:focus,
+.form-select:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  background-color: var(--gb-panel) !important;
+  border-color: var(--tenant-color) !important;
+  color: var(--gb-text) !important;
+  outline: none;
+  box-shadow: 0 0 0 3px var(--tenant-color) !important;
+}
+
+.form-label, label {
+  font-family: var(--font-pixel) !important;
+  font-size: 0.65rem !important;
+  color: var(--gb-text-dim) !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.4rem !important;
+  display: block;
+}
+
+.form-select option, select option {
+  background-color: var(--gb-panel);
+  color: var(--gb-text);
+  font-family: var(--font-pixel);
+}
+
+/* ============ BOOTSTRAP CARD OVERRIDES ============ */
+
+.card {
+  background-color: var(--gb-panel) !important;
+  border: 2px solid var(--gb-border) !important;
+  border-radius: 0 !important;
+  box-shadow: var(--shadow-hard) !important;
+  color: var(--gb-text) !important;
+}
+.card-body  { padding: 1rem !important; }
+.card-title { color: var(--gb-text) !important; text-shadow: none !important; }
+.card-text  { font-family: var(--font-pixel) !important; font-size: 0.7rem !important; color: var(--gb-text-dim) !important; }
+
+/* ============ LIST GROUP OVERRIDES ============ */
+
+.list-group { border-radius: 0 !important; display: flex; flex-direction: column; gap: 4px; }
+.list-group-item {
+  background-color: var(--gb-panel) !important;
+  border: 2px solid var(--gb-border) !important;
+  border-radius: 0 !important;
+  color: var(--gb-text) !important;
+  font-family: var(--font-pixel);
+  font-size: 0.75rem;
+  padding: 0.75rem 1rem;
+  box-shadow: var(--shadow-hard);
+  transition: none;
+}
+.list-group-item-action:hover,
+.list-group-item-action:focus {
+  background-color: var(--gb-screen) !important;
+  border-color: var(--tenant-color) !important;
+  color: var(--gb-text) !important;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+  transform: translate(2px,2px);
+  text-decoration: none;
+}
+
+/* ============ DIVIDER ============ */
+
+hr {
+  border: none;
+  border-top: 2px solid var(--gb-border);
+  margin: 1.5rem 0;
+  opacity: 1;
+}
+
+/* ============ IMAGES ============ */
+
+img { image-rendering: pixelated; image-rendering: crisp-edges; }
+
+/* ============ VALIDATION ============ */
+
+.text-danger,
+.field-validation-error {
+  font-family: var(--font-pixel) !important;
+  font-size: 0.6rem !important;
+  color: #cc2222 !important;
+  display: block;
+  margin-top: 0.3rem;
+}
+
+/* ============ SCROLLBAR ============ */
+
+::-webkit-scrollbar              { width: 8px; background-color: var(--gb-bg); }
+::-webkit-scrollbar-thumb        { background-color: var(--gb-border-bright); }
+::-webkit-scrollbar-thumb:hover  { background-color: var(--tenant-color); }
+
+
+/* =============================================
+   INDEX PAGE — GAME BOY START SCREEN
+   ============================================= */
+
+.gb-start-screen {
+  min-height: 72vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem 1rem;
+  gap: 0;
+}
+
+.gb-city-frame {
+  border: 4px solid var(--tenant-color);
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.1), 0 0 20px var(--tenant-color);
+  display: inline-block;
+  padding: 6px;
+  background: var(--gb-panel);
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+.gb-city-frame::before {
+  content: 'MAP VIEW';
+  position: absolute;
+  top: -1.6rem;
+  left: 0;
+  font-size: 0.6rem;
+  font-family: var(--font-pixel);
+  color: var(--gb-text-dim);
+  letter-spacing: 3px;
+}
+.gb-city-img {
+  display: block;
+  max-height: 220px;
+  max-width: 100%;
+  image-rendering: pixelated;
+}
+
+.gb-title-block { margin-bottom: 2.5rem; }
+
+.gb-title-main {
+  font-family: var(--font-pixel);
+  font-size: 1.8rem;
+  color: var(--gb-text);
+  text-shadow: 3px 3px 0 var(--tenant-color);
+  letter-spacing: 4px;
+  margin-bottom: 0.85rem;
+}
+
+.gb-title-sub {
+  font-family: var(--font-pixel);
+  font-size: 0.85rem;
+  color: var(--gb-text-dim);
+  letter-spacing: 4px;
+}
+
+.gb-menu-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 3rem;
+}
+
+.gb-menu-item {
+  font-family: var(--font-pixel);
+  font-size: 0.85rem;
+  color: var(--gb-text) !important;
+  text-decoration: none !important;
+  padding: 0.85rem 2.5rem;
+  border: 3px solid var(--gb-text);
+  background: var(--gb-panel);
+  box-shadow: var(--shadow-hard);
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 280px;
+  justify-content: center;
+  transition: none;
+}
+.gb-menu-item:hover {
+  border-color: var(--tenant-color) !important;
+  background: var(--tenant-color) !important;
+  color: var(--tenant-dark) !important;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+  transform: translate(2px,2px);
+}
+
+.gb-arrow {
+  color: var(--tenant-color);
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+
+.gb-copyright {
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  color: var(--gb-text-muted);
+  letter-spacing: 3px;
+}
+
+
+/* =============================================
+   PODS PAGE
+   ============================================= */
+
+.gb-page-header {
+  margin-bottom: 2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 3px solid var(--gb-border);
+}
+.gb-page-title {
+  font-family: var(--font-pixel);
+  font-size: 1.2rem;
+  color: var(--gb-text);
+  text-shadow: 2px 2px 0 var(--tenant-color);
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+/* Pod list entry */
+.gb-pod-entry {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem 1.25rem;
+  background: var(--gb-panel);
+  border: 2px solid var(--gb-border);
+  box-shadow: var(--shadow-hard);
+  margin-bottom: 8px;
+  text-decoration: none !important;
+  transition: none;
+  color: var(--gb-text) !important;
+}
+.gb-pod-entry:hover {
+  border-color: var(--tenant-color);
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+  transform: translate(2px,2px);
+  background: var(--gb-screen);
+}
+
+.gb-pod-id-badge {
+  font-family: var(--font-pixel);
+  font-size: 0.85rem;
+  color: var(--gb-text);
+  min-width: 80px;
+  flex-shrink: 0;
+}
+
+.gb-pod-capacity-area { flex-grow: 1; }
+
+.gb-capacity-label {
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  color: var(--gb-text-dim);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.gb-pokeball-row {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.gb-pokeball {
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--gb-border);
+  background: var(--gb-screen);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.gb-pokeball.filled {
+  border-color: var(--tenant-color);
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--tenant-color);
+}
+.gb-pokeball.filled img {
+  width: 30px;
+  height: 30px;
+  image-rendering: pixelated;
+}
+.gb-pokeball.empty {
+  border-style: dashed;
+  border-color: var(--gb-border);
+}
+
+.gb-capacity-text {
+  font-family: var(--font-pixel);
+  font-size: 0.65rem;
+  color: var(--gb-text-dim);
+  margin-left: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Create new pod panel */
+.gb-create-panel {
+  margin-top: 2rem;
+  background: var(--gb-panel);
+  border: 3px solid var(--gb-border-bright);
+  box-shadow: var(--shadow-hard);
+}
+.gb-create-panel-header {
+  background: var(--tenant-color);
+  border-bottom: 2px solid var(--gb-border-bright);
+  padding: 0.65rem 1rem;
+  font-family: var(--font-pixel);
+  font-size: 0.75rem;
+  color: var(--tenant-dark);
+  letter-spacing: 2px;
+}
+.gb-create-panel-body {
+  padding: 1.25rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.gb-create-panel-body .field-group { flex-grow: 1; min-width: 160px; }
+
+
+/* =============================================
+   POD DETAIL PAGE
+   ============================================= */
+
+.gb-pod-page-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 3px solid var(--gb-border);
+}
+.gb-pod-number {
+  font-family: var(--font-pixel);
+  font-size: 1.3rem;
+  color: var(--gb-text);
+  text-shadow: 2px 2px 0 var(--tenant-color);
+}
+.gb-pod-status-dot {
+  width: 12px;
+  height: 12px;
+  background: var(--tenant-color);
+  box-shadow: 0 0 6px var(--tenant-color);
+  animation: blink 1.5s step-end infinite;
+  flex-shrink: 0;
+}
+
+/* Admission card */
+.gb-admission-card {
+  background: var(--gb-panel);
+  border: 2px solid var(--gb-border);
+  box-shadow: var(--shadow-hard);
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.gb-admission-card-header {
+  padding: 0.55rem 0.75rem;
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+  border-bottom: 2px solid var(--gb-border);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Occupied slot */
+.gb-admission-card.occupied {
+  border-color: var(--tenant-color);
+  border-width: 3px;
+}
+.gb-admission-card.occupied .gb-admission-card-header {
+  background: var(--tenant-color);
+  border-bottom-color: var(--tenant-color);
+  color: var(--tenant-dark);
+}
+
+/* Empty slot */
+.gb-admission-card.empty-slot {
+  border: 2px dashed var(--gb-border);
+}
+.gb-admission-card.empty-slot .gb-admission-card-header {
+  background: var(--gb-screen);
+  border-bottom-color: var(--gb-border);
+  color: var(--gb-text-dim);
+}
+
+.gb-heal-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--tenant-dark);
+  flex-shrink: 0;
+  animation: blink 1.2s step-end infinite;
+}
+
+/* Sprite display */
+.gb-sprite-wrap {
+  padding: 0.75rem;
+  display: flex;
+  justify-content: center;
+  background: var(--gb-screen);
+  border-bottom: 1px solid var(--gb-border);
+}
+.gb-admission-sprite {
+  width: 88px;
+  height: 88px;
+  image-rendering: pixelated;
+  display: block;
+}
+
+/* Info section */
+.gb-admission-info { padding: 0.85rem; flex-grow: 1; }
+
+.gb-pokemon-name {
+  font-family: var(--font-pixel);
+  font-size: 0.8rem;
+  color: var(--gb-text);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.gb-info-row {
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  color: var(--gb-text-dim);
+  margin-bottom: 0.35rem;
+  display: block;
+}
+.gb-info-row span { color: var(--gb-text); }
+
+/* Admit form inside empty slot */
+.gb-admit-form {
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  flex-grow: 1;
+}
+.gb-admit-form .form-group { margin-bottom: 0; }
+.gb-admit-form .mb-3 { margin-bottom: 0.65rem !important; }
