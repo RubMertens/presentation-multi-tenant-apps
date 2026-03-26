@@ -11,10 +11,3 @@ public class HealingPod
     public List<PokemonAdmission> Admission { get; set; }
 }
 
-public class HealingPodEntityTypeConfiguration : IEntityTypeConfiguration<HealingPod>
-{
-    public void Configure(EntityTypeBuilder<HealingPod> builder)
-    {
-        builder.HasKey(e => new { e.Id });
-    }
-}

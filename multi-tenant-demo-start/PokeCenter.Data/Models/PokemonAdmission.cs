@@ -17,10 +17,3 @@ public class PokemonAdmission
     public int PodId { get; set; }
 }
 
-public class PokemonAdmissionEntityTypeConfiguration : IEntityTypeConfiguration<PokemonAdmission>
-{
-    public void Configure(EntityTypeBuilder<PokemonAdmission> builder)
-    {
-        builder.HasKey(e => new { e.Id });
-    }
-}
