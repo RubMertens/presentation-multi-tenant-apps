@@ -12,7 +12,7 @@ using Pokedex.Data;
 namespace Pokedex.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250330141040_init")]
+    [Migration("20260326182803_init")]
     partial class init
     {
         /// <inheritdoc />
