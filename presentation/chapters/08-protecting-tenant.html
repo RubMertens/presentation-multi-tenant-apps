@@ -1,0 +1,139 @@
+<!-- Chapter 8: Protecting a Tenant -->
+<section data-name="Protecting">
+
+<!-- Slide 39: Section header -->
+<section data-background-color="#003865">
+  <h2>Protecting a Tenant</h2>
+  <aside class="notes">
+    Users must only be able to sign in to their own tenant. Let's add tenant-aware identity.
+  </aside>
+</section>
+
+<!-- Slide 40: ApplicationUser.cs -->
+<section>
+  <h3>Protecting a tenant &ndash; ApplicationUser.cs</h3>
+  <pre><code data-trim data-noescape class="language-csharp" data-line-numbers="1|3">
+public class ApplicationUser : IdentityUser
+{
+    public string TenantId { get; set; }
+}
+  </code></pre>
+  <aside class="notes">
+    File: ApplicationUser.cs — Extend IdentityUser with a TenantId. Each user belongs to exactly one tenant.
+  </aside>
+</section>
+
+<!-- Slide 41: ApplicationDbContext.cs -->
+<section>
+  <h3>Protecting a tenant &ndash; ApplicationDbContext.cs</h3>
+  <pre><code data-trim data-noescape class="language-csharp" data-line-numbers="1-3|4">
+public class ApplicationDbContext(
+    DbContextOptions&lt;ApplicationDbContext&gt; options,
+    TenantContext tenantContext)
+    : IdentityDbContext&lt;ApplicationUser&gt;(options)
+{
+    // ...
+}
+  </code></pre>
+  <aside class="notes">
+    File: ApplicationDbContext.cs — Switch to IdentityDbContext with ApplicationUser as the user type.
+  </aside>
+</section>
+
+<!-- Slide 42: Migration command -->
+<section>
+  <h3>Protecting a tenant &ndash; Add Migration</h3>
+  <pre><code data-trim data-noescape class="language-bash">
+dotnet ef migrations add applicationuser \
+    -s ../PokeCenter.web
+  </code></pre>
+  <aside class="notes">
+    Run the migration to add the TenantId column to the users table.
+  </aside>
+</section>
+
+<!-- Slide 43: ApplicationUserStore -->
+<section>
+  <h3>Protecting a tenant &ndash; ApplicationUserStore</h3>
+  <pre><code data-trim data-noescape class="language-csharp" data-line-numbers="1-5|7-13">
+public class ApplicationUserStore(
+    ApplicationDbContext context,
+    Tenant tenant,
+    IdentityErrorDescriber? describer = null)
+    : UserStore&lt;ApplicationUser&gt;(context, describer)
+{
+    public override Task&lt;IdentityResult&gt; CreateAsync(
+        ApplicationUser user,
+        CancellationToken cancellationToken = new())
+    {
+        user.TenantId = tenant.Id;
+        return base.CreateAsync(user, cancellationToken);
+    }
+}
+  </code></pre>
+  <aside class="notes">
+    File: ApplicationUserStore.cs — Override CreateAsync to stamp the TenantId onto every new user automatically.
+  </aside>
+</section>
+
+<!-- Slide 44: MultiTenantSigninManager -->
+<section>
+  <h3>Protecting a tenant &ndash; MultiTenantSigninManager</h3>
+  <pre><code data-trim data-noescape class="language-csharp" data-line-numbers="1-4|13-14|16-18">
+public class MultiTenantSigninManager(
+    /* ... other SignInManager dependencies ... */
+    Tenant tenant)
+    : SignInManager&lt;ApplicationUser&gt;(/* ... */)
+{
+    public override Task&lt;SignInResult&gt;
+        PasswordSignInAsync(
+            ApplicationUser user,
+            string password,
+            bool isPersistent,
+            bool lockoutOnFailure)
+    {
+        if (user.TenantId != tenant.Id)
+            return Task.FromResult(SignInResult.Failed);
+
+        return base.PasswordSignInAsync(
+            user, password,
+            isPersistent, lockoutOnFailure);
+    }
+}
+  </code></pre>
+  <aside class="notes">
+    File: MultiTenantSigninManager.cs — Validates the user belongs to the current tenant before allowing sign-in. Rejects cross-tenant logins.
+  </aside>
+</section>
+
+<!-- Slide 45: Program.cs DI registration -->
+<section>
+  <h3>Protecting a tenant &ndash; Program.cs</h3>
+  <pre><code data-trim data-noescape class="language-csharp" data-line-numbers="1-3|4|5|6">
+builder.Services
+    .AddDefaultIdentity&lt;ApplicationUser&gt;(options =&gt;
+        options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores&lt;ApplicationDbContext&gt;()
+    .AddUserStore&lt;ApplicationUserStore&gt;()
+    .AddSignInManager&lt;MultiTenantSigninManager&gt;();
+  </code></pre>
+  <aside class="notes">
+    File: Program.cs — Wire up Identity with our custom user store and sign-in manager.
+  </aside>
+</section>
+
+<!-- Slide 46: LoginPartial.cshtml -->
+<section>
+  <h3>Protecting a tenant &ndash; _LoginPartial.cshtml</h3>
+  <pre><code data-trim data-noescape class="language-html" data-line-numbers="1|3-4">
+<del style="color: #999; text-decoration: line-through;">@inject SignInManager&lt;ApplicationUser&gt; SignInManager</del>
+
+<mark>@inject MultiTenantSigninManager SignInManager</mark>
+@inject UserManager&lt;ApplicationUser&gt; UserManager
+  </code></pre>
+  <aside class="notes">
+    File: _LoginPartial.cshtml — Swap the default SignInManager for our MultiTenantSigninManager.
+  </aside>
+</section>
+
+</section>

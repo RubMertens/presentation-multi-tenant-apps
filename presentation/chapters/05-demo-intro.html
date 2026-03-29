@@ -1,0 +1,52 @@
+<!-- Chapter 5: Enough Talk / Demo intro -->
+<section data-name="Demo">
+
+<!-- ==================== SLIDE 25: Section Header - Show me the code ==================== -->
+<section class="section-header" data-background-color="#003865">
+  <h1>Enough Talk, Show me the code &#x1F9D1;&#x200D;&#x1F4BB;</h1>
+  <h3>What tenant is calling</h3>
+</section>
+
+<!-- ==================== SLIDE 26: Demo time! ==================== -->
+<section>
+  <h1>Demo time!</h1>
+  <p>Let's make an application multi-tenant aware!</p>
+</section>
+
+<!-- ==================== SLIDE 27: Script ==================== -->
+<section>
+  <h2>Script</h2>
+  <ul style="font-size: 0.75em; line-height: 1.4;">
+    <li class="fragment fade-in"><strong>Detect</strong> a tenant
+      <ul style="margin-top: 0.1em;">
+        <li>Middleware</li>
+        <li>Subdomain</li>
+        <li>TenantContext + Accessor</li>
+      </ul>
+    </li>
+    <li class="fragment fade-in"><strong>Reflect</strong> a tenant
+      <ul style="margin-top: 0.1em;">
+        <li>Knowing available tenants</li>
+        <li>TenantConfig extending with custom info</li>
+      </ul>
+    </li>
+    <li class="fragment fade-in"><strong>Protect</strong> a tenant
+      <ul style="margin-top: 0.1em;">
+        <li>ApplicationUser</li>
+        <li>ApplicationUserStore</li>
+        <li>MultiTenantSigninManager</li>
+      </ul>
+    </li>
+    <li class="fragment fade-in"><strong>Protect</strong> the data
+      <ul style="margin-top: 0.1em;">
+        <li>Introduce ITenant</li>
+        <li>QueryFilter</li>
+      </ul>
+    </li>
+  </ul>
+  <aside class="notes">
+    This is the roadmap for the demo. We'll go through each step systematically.
+  </aside>
+</section>
+
+</section>

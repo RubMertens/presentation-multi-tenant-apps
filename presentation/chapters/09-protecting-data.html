@@ -1,0 +1,131 @@
+<!-- Chapter 9: Protecting the data -->
+<section data-name="Data Protection">
+
+<!-- Slide 47: Section header -->
+<section data-background-color="#003865">
+  <h2>Protecting the data</h2>
+  <p style="opacity: 0.7;">(of a tenant)</p>
+  <aside class="notes">
+    Users are protected. Now let's make sure data is also isolated per tenant using EF Core query filters.
+  </aside>
+</section>
+
+<!-- Slide 48: ITenanted interface -->
+<section>
+  <h3>Protecting the data &ndash; ITenanted.cs</h3>
+  <pre><code data-trim data-noescape class="language-csharp">
+public interface ITenanted
+{
+    public string TenantId { get; set; }
+}
+  </code></pre>
+  <aside class="notes">
+    File: ITenanted.cs — A marker interface for all entities that belong to a tenant.
+  </aside>
+</section>
+
+<!-- Slide 49: HealingPod.cs -->
+<section>
+  <h3>Protecting the data &ndash; HealingPod.cs</h3>
+  <pre><code data-trim data-noescape class="language-csharp" data-line-numbers="1|6">
+public class HealingPod : ITenanted
+{
+    public int Id { get; set; }
+    public int MaxCapacity { get; set; }
+    public List&lt;PokemonAdmission&gt; Admission { get; set; }
+    public string TenantId { get; set; }
+}
+  </code></pre>
+  <aside class="notes">
+    File: HealingPod.cs — Implements ITenanted by adding TenantId property.
+  </aside>
+</section>
+
+<!-- Slide 50: PokemonAdmission -->
+<section>
+  <h3>Protecting the data &ndash; PokemonAdmission</h3>
+  <pre><code data-trim data-noescape class="language-csharp" data-line-numbers="1|8">
+public class PokemonAdmission : ITenanted
+{
+    public int Id { get; set; }
+    public Pokemon Pokemon { get; set; }
+    public int PokemonId { get; set; }
+    public DateTime AdmissionStart { get; set; }
+    public DateTime AdmissionEnd { get; set; }
+    public string TenantId { get; set; }
+}
+  </code></pre>
+  <aside class="notes">
+    File: PokemonAdmission.cs — Also implements ITenanted. Every data entity gets a TenantId.
+  </aside>
+</section>
+
+<!-- Slide 51: TenantIdValueGenerator -->
+<section>
+  <h3>Protecting the data &ndash; TenantIdValueGenerator</h3>
+  <pre><code data-trim data-noescape class="language-csharp" data-line-numbers="1|3-10|12-13|16">
+public class TenantIdValueGenerator : ValueGenerator&lt;string&gt;
+{
+    public override string Next(EntityEntry entry)
+    {
+        if (entry is {
+            Entity: ITenanted,
+            Context: ApplicationDbContext db })
+        {
+            return db.TenantId;
+        }
+
+        throw new InvalidOperationException(
+            "Could not generate a new TenantId");
+    }
+
+    public override bool GeneratesTemporaryValues =&gt; false;
+}
+  </code></pre>
+  <aside class="notes">
+    File: ApplicationDbContext.cs — Automatically generates the TenantId for new entities from the current DbContext tenant.
+  </aside>
+</section>
+
+<!-- Slide 52: ApplicationDbContext entity config (HealingPod) -->
+<section data-auto-animate>
+  <h3>Protecting the data &ndash; ApplicationDbContext</h3>
+  <pre data-id="entity-config"><code data-trim data-noescape class="language-csharp" data-line-numbers="1-2|3-6|7|8">
+builder.Entity&lt;HealingPod&gt;(entity =&gt;
+{
+    entity.HasKey(e =&gt; new { e.Id });
+    entity.Property(e =&gt; e.TenantId)
+        .IsRequired()
+        .HasValueGenerator&lt;TenantIdValueGenerator&gt;();
+    entity.HasIndex(e =&gt; e.TenantId);
+    entity.HasQueryFilter(e =&gt; e.TenantId == TenantId);
+});
+  </code></pre>
+  <aside class="notes">
+    File: ApplicationDbContext.cs — Configure HealingPod: required TenantId with auto-generation, index for performance, and a query filter for automatic tenant isolation.
+  </aside>
+</section>
+
+<!-- Slide 53: ApplicationDbContext entity config (PokemonAdmission) -->
+<section data-auto-animate>
+  <h3>Protecting the data &ndash; ApplicationDbContext</h3>
+  <pre data-id="entity-config"><code data-trim data-noescape class="language-csharp" data-line-numbers>
+builder.Entity&lt;PokemonAdmission&gt;(entity =&gt;
+{
+    entity.HasKey(e =&gt; new { e.Id });
+    entity.Property(e =&gt; e.TenantId)
+        .IsRequired()
+        .HasValueGenerator&lt;TenantIdValueGenerator&gt;();
+    entity.HasIndex(e =&gt; e.TenantId);
+    entity.HasQueryFilter(e =&gt; e.TenantId == TenantId);
+});
+  </code></pre>
+  <p class="fragment" style="font-size: 0.8em; color: #e74c3c;">
+    Repetitive... can we do better?
+  </p>
+  <aside class="notes">
+    File: ApplicationDbContext.cs — Same configuration for PokemonAdmission. Notice the repetition? This is a DRY violation we'll fix next.
+  </aside>
+</section>
+
+</section>

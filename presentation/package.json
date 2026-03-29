@@ -1,0 +1,15 @@
+{
+  "name": "kdg-multi-tenancy-presentation",
+  "version": "1.0.0",
+  "description": "Reveal.js presentation: Building Multi-Tenant Applications",
+  "scripts": {
+    "start": "serve .",
+    "dev": "serve . --open",
+    "pdf": "npx decktape reveal http://localhost:3000 presentation.pdf"
+  },
+  "author": "Ruben Mertens",
+  "license": "ISC",
+  "dependencies": {
+    "serve": "^14.2.6"
+  }
+}
