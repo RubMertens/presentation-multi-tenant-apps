@@ -30,7 +30,7 @@ public class ApplicationDbContext(
         foreach (var tenantedModel in tenantedModels)
         {
             builder.Entity(tenantedModel.ClrType)
-                .HasQueryFilter<ITenanted>(e => e.TenantId == TenantId)
+                .HasQueryFilter((ITenanted e) => e.TenantId == TenantId)
                 .HasIndex(nameof(ITenanted.TenantId))
                 ;
             builder.Entity(tenantedModel.ClrType)
