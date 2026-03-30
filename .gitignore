@@ -1,0 +1,42 @@
+# =========================
+# .NET
+# =========================
+bin/
+obj/
+*.user
+*.suo
+*.cache
+.vs/
+*.DotSettings.user
+packages/
+*.nupkg
+project.lock.json
+TestResults/
+
+# =========================
+# npm / Node
+# =========================
+node_modules/
+npm-debug.log*
+.npm
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# =========================
+# IDE
+# =========================
+.idea/
+.vscode/
+!.vscode/settings.json
+*.code-workspace
+
+# =========================
+# PowerPoint temp files
+# =========================
+~$*.pptx

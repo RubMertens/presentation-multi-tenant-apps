@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Building Multi-Tenant Applications</title>
+
+    <!-- Reveal.js core CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/reveal.js@5/dist/reveal.css" />
+    <!-- Reveal.js white base theme -->
+    <link rel="stylesheet" href="https://unpkg.com/reveal.js@5/dist/theme/white.css" />
+    <!-- Code highlighting theme (VS Code Light+ inspired) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs.min.css" />
+
+    <!-- Plugin CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-copycode/plugin/copycode/copycode.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-simplemenu/plugin/simplemenu/simplemenu.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-appearance/plugin/appearance/appearance.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css" />
+
+    <!-- Info Support custom theme overrides -->
+    <link rel="stylesheet" href="css/infosupport-theme.css" />
+  </head>
+  <body>
+    <!--
+      IMPORTANT: This presentation must be served from a local web server.
+      The chapter files are loaded via fetch(), which does not work with file:// URLs.
+
+      To serve locally, run one of:
+        npx serve .
+        python3 -m http.server
+        dotnet serve (if installed)
+
+      Then open http://localhost:3000 (or whichever port is shown).
+
+      PDF Export: Open in Chrome with ?print-pdf appended to URL, then Ctrl+P / Cmd+P.
+      Example: http://localhost:3000/?print-pdf
+      Set Layout to Landscape, Margins to None, and enable Background graphics.
+      Alternative: npx decktape reveal http://localhost:3000 presentation.pdf
+    -->
+    <div class="reveal">
+      <div class="slides">
+        <!-- Chapters are loaded dynamically from the chapters/ directory -->
+      </div>
+    </div>
+
+    <!-- Reveal.js core -->
+    <script src="https://unpkg.com/reveal.js@5/dist/reveal.js"></script>
+    <!-- Plugins -->
+    <script src="https://unpkg.com/reveal.js@5/plugin/notes/notes.js"></script>
+    <script src="https://unpkg.com/reveal.js@5/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js-copycode/plugin/copycode/copycode.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js-simplemenu/plugin/simplemenu/simplemenu.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js-appearance/plugin/appearance/appearance.js"></script>
+    <script>
+      const chapters = [
+        'chapters/01-title-agenda.html',
+        'chapters/02-who-am-i.html',
+        'chapters/03-what-is-multi-tenancy.html',
+        'chapters/04-tenant-detection.html',
+        'chapters/05-demo-intro.html',
+        'chapters/06-detecting-tenant.html',
+        'chapters/07-reflecting-tenant.html',
+        'chapters/08-protecting-tenant.html',
+        'chapters/09-protecting-data.html',
+        'chapters/10-keeping-it-dry.html',
+        'chapters/11-closing.html',
+      ];
+
+      async function loadPresentation() {
+        const slidesDiv = document.querySelector('.slides');
+        for (const chapter of chapters) {
+          const response = await fetch(chapter);
+          const html = await response.text();
+          slidesDiv.insertAdjacentHTML('beforeend', html);
+        }
+        Reveal.initialize({
+          hash: true,
+          slideNumber: true,
+          transition: 'slide',
+          center: true,
+          progress: true,
+          controls: true,
+          navigationMode: 'grid',
+          width: 960,
+          height: 700,
+          // PDF export options
+          pdfSeparateFragments: false,
+          pdfMaxPagesPerSlide: 1,
+          plugins: [RevealNotes, RevealHighlight, RevealMermaid, CopyCode, Simplemenu, Appearance],
+          // CopyCode config
+          copycode: {
+            copy: "Copy",
+            copied: "Copied!",
+          },
+          // Mermaid config with Info Support brand colors
+          mermaid: {
+            theme: 'base',
+            themeVariables: {
+              // Node styling
+              primaryColor: '#E8F4FD',
+              primaryTextColor: '#003865',
+              primaryBorderColor: '#003865',
+              // Lines and edges
+              lineColor: '#00A3E0',
+              // Secondary elements (subgraphs, etc)
+              secondaryColor: '#F0F7FC',
+              secondaryTextColor: '#003865',
+              secondaryBorderColor: '#00A3E0',
+              // Tertiary
+              tertiaryColor: '#FFFFFF',
+              tertiaryTextColor: '#003865',
+              tertiaryBorderColor: '#6ECFF6',
+              // Background
+              background: 'transparent',
+              mainBkg: '#E8F4FD',
+              // Font
+              fontFamily: '"GraphikRegular", "Source Sans 3", sans-serif',
+              fontSize: '16px',
+              // Notes, labels
+              noteBkgColor: '#BED62F',
+              noteTextColor: '#003865',
+              noteBorderColor: '#003865',
+              // Cluster/subgraph
+              clusterBkg: '#F0F7FC',
+              clusterBorder: '#00A3E0',
+            }
+          },
+        });
+      }
+      loadPresentation();
+    </script>
+  </body>
+</html>

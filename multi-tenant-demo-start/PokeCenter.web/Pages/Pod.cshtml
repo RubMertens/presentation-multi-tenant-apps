@@ -2,57 +2,72 @@
 @model PokeCenter.web.Pages.Pod
 
 @{
-    ViewData["Title"] = @Model.PodId;
+    ViewData["Title"] = $"Pod #{Model.PodId}";
 }
 
-<input asp-for="Today">
+<input type="hidden" asp-for="Today"/>
 
-<h1 class="display-4">Pod @Model.PodId</h1>
+<div class="gb-pod-page-header">
+    <div class="gb-pod-status-dot"></div>
+    <h1 class="gb-pod-number">POD #@Model.PodId</h1>
+</div>
 
-
-<div class="row row-cols-1 row-cols-md-3 g-4">
+<div class="row row-cols-1 row-cols-md-3 g-3">
     @foreach (var admission in @Model.Admissions)
     {
         <div class="col">
             @if (admission.IsFull)
             {
-                <div class="card h-100">
-                    <div class="row g-0">
-                        <div class="col-md-4">
-                            <img src="@admission.Image" class="img-fluid rounded-start" width="150px"/>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <h5 class="card-title">Admission: @(admission.Name) for @admission.TrainerName</h5>
-                                <p class="card-text">From @admission.AdmissionStart until @admission.AdmissionEnd</p>
-                            </div>
-                        </div>
+                <div class="gb-admission-card occupied">
+                    <div class="gb-admission-card-header">
+                        <div class="gb-heal-dot"></div>
+                        HEALING
+                    </div>
+                    <div class="gb-sprite-wrap">
+                        <img src="@admission.Image" class="gb-admission-sprite" alt="@admission.Name"/>
+                    </div>
+                    <div class="gb-admission-info">
+                        <span class="gb-pokemon-name">@admission.Name.ToUpper()</span>
+                        <span class="gb-info-row">TRAINER: <span>@admission.TrainerName.ToUpper()</span></span>
+                        <span class="gb-info-row">FROM: <span>@admission.AdmissionStart.ToString("dd MMM yyyy")</span></span>
+                        <span class="gb-info-row">UNTIL: <span>@admission.AdmissionEnd.ToString("dd MMM yyyy")</span></span>
                     </div>
                 </div>
             }
             else
             {
-                <div class="card ">
-                    <div class="card-body">
-                        <form class="mb-3" method="post">
-                            <label asp-for="TrainerName"></label>
-                            <input asp-for="TrainerName" class="form-control"/>
+                <div class="gb-admission-card empty-slot">
+                    <div class="gb-admission-card-header">EMPTY SLOT</div>
+                    <div class="gb-admit-form">
+                        <form method="post">
+                            <input type="hidden" asp-for="PodId"/>
 
-                            <label asp-for="PokemonIndex"></label>
-                            <select class="form-select" asp-for="PokemonIndex">
-                                @foreach (var p in Model.Pokemons)
-                                {
-                                    <option value="@p.Index">@p.Name</option>
-                                }
-                            </select>
+                            <div class="mb-3">
+                                <label asp-for="TrainerName">TRAINER NAME</label>
+                                <input asp-for="TrainerName" class="form-control"/>
+                            </div>
 
-                            <label asp-for="AdmissionStart"></label>
-                            <input class="form-control" asp-for="AdmissionStart">
+                            <div class="mb-3">
+                                <label asp-for="PokemonIndex">POKEMON</label>
+                                <select class="form-select" asp-for="PokemonIndex">
+                                    @foreach (var p in Model.Pokemons)
+                                    {
+                                        <option value="@p.Index">@p.Name</option>
+                                    }
+                                </select>
+                            </div>
 
-                            <label asp-for="AdmissionEnd"></label>
-                            <input class="form-control" asp-for="AdmissionEnd">
+                            <div class="mb-3">
+                                <label asp-for="AdmissionStart">FROM</label>
+                                <input class="form-control" asp-for="AdmissionStart"/>
+                            </div>
 
-                            <button type="submit" class="btn btn-primary">Admit</button>
+                            <div class="mb-3">
+                                <label asp-for="AdmissionEnd">UNTIL</label>
+                                <input class="form-control" asp-for="AdmissionEnd"/>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">ADMIT</button>
                         </form>
                     </div>
                 </div>
@@ -60,4 +75,3 @@
         </div>
     }
 </div>
-        

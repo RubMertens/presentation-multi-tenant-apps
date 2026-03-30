@@ -15,7 +15,20 @@ public class ApplicationDbContext(
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+        builder.Entity<Pokemon>(entity =>
+        {
+            entity.HasKey(e => new { e.Index });
+            entity.Property(e => e.Index).ValueGeneratedNever();
+        });
+
+        builder.Entity<HealingPod>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+        });
+        builder.Entity<PokemonAdmission>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+        });
         base.OnModelCreating(builder);
     }
 }

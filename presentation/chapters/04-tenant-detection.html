@@ -1,0 +1,96 @@
+<!-- Chapter 4: Who's knocking at the door? -->
+<section data-name="Tenant Detection">
+
+<!-- ==================== SLIDE 20: Section Header - Who's knocking? ==================== -->
+<section class="section-header" data-background-color="#003865">
+  <h1>Who's knocking at the door?</h1>
+  <h3>How do you know which tenant to serve</h3>
+</section>
+
+<!-- ==================== SLIDE 21: Detection question ==================== -->
+<section>
+  <h2>What in what ways could we detect which tenant is calling?</h2>
+  <aside class="notes">
+    Interactive moment - ask the audience how they would identify which tenant is making a request.
+  </aside>
+</section>
+
+<!-- ==================== SLIDE 22: Query string ==================== -->
+<section>
+  <h2>Query string</h2>
+  <pre style="font-size: 0.7em;"><code data-trim data-noescape class="language-bash">
+https://my-website.com?tenantId=customer1
+  </code></pre>
+  <aside class="notes">
+    Simplest approach - tenant ID in the query string.
+    Easy to implement but visible to users and easy to tamper with.
+  </aside>
+</section>
+
+<!-- ==================== SLIDE 23: Header ==================== -->
+<section>
+  <h2>Header</h2>
+  <pre style="font-size: 0.7em;"><code data-trim data-noescape class="language-bash">
+GET /page HTTP/1.1
+Host: my-website.com
+X-TenantId: customer1
+  </code></pre>
+  <aside class="notes">
+    Tenant ID in a custom HTTP header. Better for API-to-API communication.
+    Not visible in the URL but requires client cooperation.
+  </aside>
+</section>
+
+<!-- ==================== SLIDE 24: Subdomain ==================== -->
+<section>
+  <h2>Subdomain</h2>
+  <pre style="font-size: 0.7em;"><code data-trim data-noescape class="language-bash">
+http://customer1.my-website.com/page
+  </code></pre>
+  <aside class="notes">
+    Tenant identified by subdomain. Clean URLs and natural branding per tenant.
+    Requires DNS/wildcard configuration.
+  </aside>
+</section>
+
+<!-- Slide: What is middleware? -->
+<section>
+  <h2>What is middleware?</h2>
+  <div class="mermaid" style="max-height: 55vh; overflow: hidden;">
+  %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px', 'actorBkg': '#E8F4FD', 'actorBorder': '#003865', 'actorTextColor': '#003865', 'signalColor': '#00A3E0', 'signalTextColor': '#003865', 'noteBkgColor': '#BED62F', 'noteTextColor': '#003865', 'noteBorderColor': '#003865', 'activationBkgColor': '#E8F4FD', 'activationBorderColor': '#003865'}}}%%
+  sequenceDiagram
+    participant C as Client
+    participant H as HttpsRedirection
+    participant T as TenantMiddleware
+    participant R as Routing
+    participant A as Authorization
+    participant P as Razor Pages
+
+    C->>H: HTTP Request
+    activate H
+    H->>T: next()
+    activate T
+    Note over T: Extract tenant<br/>Lookup tenant<br/>Set context
+    T->>R: next()
+    activate R
+    R->>A: next()
+    activate A
+    A->>P: next()
+    activate P
+    P-->>A: Response
+    deactivate P
+    A-->>R: Response
+    deactivate A
+    R-->>T: Response
+    deactivate R
+    T-->>H: Response
+    deactivate T
+    H-->>C: Response
+    deactivate H
+  </div>
+  <aside class="notes">
+    The request flows through each middleware in order. Each middleware calls next() to pass the request along, then the response flows back through the same chain in reverse. TenantMiddleware is our custom addition.
+  </aside>
+</section>
+
+</section>

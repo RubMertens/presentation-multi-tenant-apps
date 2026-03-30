@@ -1,0 +1,154 @@
+<!-- Chapter 7: Reflecting a Tenant -->
+<section data-name="Reflecting">
+
+<!-- Slide 32: Section header -->
+<section data-background-color="#003865">
+  <h2>Reflecting a Tenant</h2>
+  <aside class="notes">
+    Now that we can detect a tenant, let's make the UI reflect which tenant is active.
+  </aside>
+</section>
+
+<!-- Slide 33: Extended Tenant.cs -->
+<section data-auto-animate>
+  <h3>Reflecting a tenant &ndash; Tenant.cs</h3>
+  <pre data-id="tenant-class"><code data-trim data-noescape class="language-csharp" data-line-numbers="4-6">
+public class Tenant
+{
+    public string Id { get; set; }
+    public string Name { get; set; }
+    public string Color { get; set; }
+    public string CityImage { get; set; }
+}
+  </code></pre>
+  <aside class="notes">
+    File: Tenant.cs — Extended with Name, Color, and CityImage so we can theme the UI per tenant.
+  </aside>
+</section>
+
+<!-- Slide 34: appsettings.json -->
+<section>
+  <h3>Reflecting a tenant &ndash; appsettings.json</h3>
+  <pre><code data-trim data-noescape class="language-json" data-line-numbers="1-16|3-8|9-14">
+"AvailableTenants": {
+  "Tenants": [
+    {
+      "Id": "pallet-town",
+      "Name": "Pallet Town",
+      "Color": "#1a8a78",
+      "CityImage": "https://archives.bulbagarden.net/media/upload/7/77/Pallet_Town_FRLG.png"
+    },
+    {
+      "Id": "vermillion-city",
+      "Name": "Vermillion City",
+      "Color": "#d05535",
+      "CityImage": "https://archives.bulbagarden.net/media/upload/8/8d/Vermilion_City_FRLG.png"
+    }
+  ]
+}
+  </code></pre>
+  <aside class="notes">
+    File: appsettings.json — Two tenants configured: Pallet Town (green) and Vermillion City (orange).
+  </aside>
+</section>
+
+<!-- Slide 35: Program.cs configure tenants -->
+<section>
+  <h3>Reflecting a tenant &ndash; Program.cs</h3>
+  <pre><code data-trim data-noescape class="language-csharp">
+builder.Services.Configure&lt;AvailableTenants&gt;(
+    builder.Configuration.GetSection(
+        AvailableTenants.SectionName));
+  </code></pre>
+  <p style="font-size: 0.7em; opacity: 0.6; margin: 0.5em 0;">OR</p>
+  <pre><code data-trim data-noescape class="language-csharp" data-line-numbers>
+public class AvailableTenantsSetup(
+    IConfiguration configuration)
+    : IConfigureOptions&lt;AvailableTenants&gt;
+{
+    public void Configure(AvailableTenants options)
+    {
+        configuration
+            .GetSection(AvailableTenants.SectionName)
+            .Bind(options);
+    }
+}
+  </code></pre>
+  <aside class="notes">
+    File: Program.cs / AvailableTenantsSetup.cs — Two approaches to bind the config section: direct Configure call or IConfigureOptions implementation.
+  </aside>
+</section>
+
+<!-- Slide 36: Updated TenantMiddleware -->
+<section>
+  <h3>Reflecting a tenant &ndash; TenantMiddleware.cs</h3>
+  <pre data-id="middleware-code"><code data-trim data-noescape class="language-csharp" data-line-numbers="1-4|6-7|9-10|12-13|15-19|21-22">
+public class TenantMiddleware(
+    TenantContext tenantContext,
+    IOptionsSnapshot&lt;AvailableTenants&gt; availableTenants)
+    : IMiddleware
+{
+    public Task InvokeAsync(HttpContext context,
+        RequestDelegate next)
+    {
+        var subdomain = context.Request.Host
+            .Host.Split('.')[0];
+
+        var tenant = availableTenants.Value.Tenants
+            .FirstOrDefault(t =&gt; t.Id == subdomain);
+
+        if (tenant == null)
+        {
+            context.Response.StatusCode = 404;
+            return Task.CompletedTask;
+        }
+
+        tenantContext.Tenant = tenant;
+        return next(context);
+    }
+}
+  </code></pre>
+  <aside class="notes">
+    File: TenantMiddleware.cs — Now looks up the tenant from config. Returns 404 if no matching tenant is found.
+  </aside>
+</section>
+
+<!-- Slide 37: _Layout.cshtml CSS custom properties -->
+<section>
+  <h3>Reflecting a tenant &ndash; _Layout.cshtml</h3>
+  <pre><code data-trim data-noescape class="language-html">
+@inject Tenant Tenant
+
+&lt;style&gt;
+    :root {
+        --tenant-color: @Tenant.Color;
+        --tenant-city-image: url('@Tenant.CityImage');
+    }
+&lt;/style&gt;
+  </code></pre>
+  <aside class="notes">
+    File: _Layout.cshtml — Inject the tenant and set CSS custom properties. The entire theme now adapts to the current tenant.
+  </aside>
+</section>
+
+<!-- Slide 38: Index.cshtml tenant-aware UI -->
+<section>
+  <h3>Reflecting a tenant &ndash; Index.cshtml</h3>
+  <pre><code data-trim data-noescape class="language-html">
+@inject Tenant tenant;
+  </code></pre>
+  <pre><code data-trim data-noescape class="language-html" data-line-numbers>
+&lt;div class="gb-city-frame"&gt;
+    &lt;img src="@tenant.CityImage" /&gt;
+&lt;/div&gt;
+&lt;div class="gb-title-block"&gt;
+    &lt;div class="gb-title-main"&gt;POKECENTER&lt;/div&gt;
+    &lt;div class="gb-title-sub"&gt;@tenant.Name&lt;/div&gt;
+&lt;/div&gt;
+  </code></pre>
+  <aside class="notes">
+    File: Index.cshtml — Inject the tenant and use its properties to show the city image and tenant name.
+  </aside>
+</section>
+
+</section>

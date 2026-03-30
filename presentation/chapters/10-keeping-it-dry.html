@@ -1,0 +1,42 @@
+<!-- Chapter 10: Keeping it DRY -->
+<section data-name="Keeping it DRY">
+
+<!-- Slide 54: Section header -->
+<section data-background-color="#003865">
+  <h2>Keeping it DRY</h2>
+  <p style="opacity: 0.7;">(with magic &#x1FA84;)</p>
+  <aside class="notes">
+    Let's use reflection and expression rewriting to apply the tenant config to all ITenanted entities automatically.
+  </aside>
+</section>
+
+<!-- Slide 55: OnModelCreating with reflection -->
+<section>
+  <h3>Keeping it DRY (with magic &#x1FA84;)</h3>
+  <pre><code data-trim data-noescape class="language-csharp" style="font-size: 0.55em;" data-line-numbers="1-5|6-17">
+protected override void OnModelCreating(ModelBuilder builder)
+{
+    var tenantedModels = builder.Model.GetEntityTypes()
+        .Where(e =&gt;
+            typeof(ITenanted).IsAssignableFrom(e.GetType()));
+    foreach (var model in tenantedModels)
+    {
+        builder.Entity(model.ClrType)
+            .HasQueryFilter((ITenanted e) =&gt;
+                e.TenantId == Tenant.Id)
+            .HasIndex(nameof(ITenanted.TenantId));
+        builder.Entity(model.ClrType)
+            .Property(nameof(ITenanted.TenantId))
+            .IsRequired()
+            .HasValueGenerator&lt;TenantIdValueGenerator&gt;();
+    }
+    //...
+}
+  </code></pre>
+  <aside class="notes">
+    File: ApplicationDbContext.cs — Use reflection to find all ITenanted types and apply query filter, index, and value generator automatically. No more per-entity boilerplate.
+  </aside>
+</section>
+
+
+</section>

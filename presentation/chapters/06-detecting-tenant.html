@@ -1,0 +1,84 @@
+<!-- Chapter 6: Detecting a tenant -->
+<section data-name="Detecting">
+
+<!-- Slide 28: Section header -->
+<section data-background-color="#003865">
+  <h2>Detecting a tenant</h2>
+  <aside class="notes">
+    Let's start coding. First step: how do we detect which tenant is calling?
+  </aside>
+</section>
+
+<!-- Slide 29: Tenant.cs (simple version) -->
+<section data-auto-animate>
+  <h3>Detecting a tenant &ndash; Tenant.cs</h3>
+  <pre data-id="tenant-class"><code data-trim data-noescape class="language-csharp">
+public class Tenant
+{
+    public string Id { get; set; }
+}
+  </code></pre>
+  <pre data-id="tenant-accessor"><code data-trim data-noescape class="language-csharp">
+public class TenantContext
+{
+    public Tenant Tenant { get; set; }
+}
+  </code></pre>
+  <aside class="notes">
+    File: Tenant.cs — Simple tenant model and a scoped context accessor to hold the current tenant.
+  </aside>
+</section>
+
+<!-- Slide 30: TenantDependencyExtensions -->
+<section>
+  <h3>Detecting a tenant &ndash; TenantExtensions</h3>
+  <pre><code data-trim data-noescape class="language-csharp" data-line-numbers="1-4|6|7-9|10">
+public static class TenantExtensions
+{
+    public static IServiceCollection AddTenantContext(
+        this IServiceCollection services)
+    {
+        services.AddScoped&lt;TenantContext&gt;();
+        services.AddTransient&lt;Tenant&gt;(p =&gt;
+            p.GetRequiredService&lt;TenantContext&gt;().Tenant
+        );
+        return services;
+    }
+}
+  </code></pre>
+  <aside class="notes">
+    File: Tenant.cs — Extension method to register TenantContext as scoped and Tenant as a transient that resolves from the context.
+  </aside>
+</section>
+
+<!-- Slide 31: TenantMiddleware (initial version) -->
+<section>
+  <h3>Building Middleware</h3>
+  <pre data-id="middleware-code"><code data-trim data-noescape class="language-csharp" data-line-numbers="1-2|4-5|7-8|9-12|13">
+public class TenantMiddleware(
+    TenantContext tenantContext) : IMiddleware
+{
+    public Task InvokeAsync(HttpContext context,
+        RequestDelegate next)
+    {
+        var subdomain = context.Request.Host
+            .Host.Split('.')[0];
+        tenantContext.Tenant = new Tenant
+        {
+            Id = subdomain
+        };
+        return next(context);
+    }
+}
+  </code></pre>
+  <div class="fragment">
+    <pre><code data-trim data-noescape class="language-csharp">
+builder.Services.AddScoped&lt;TenantMiddleware&gt;();
+    </code></pre>
+  </div>
+  <aside class="notes">
+    File: TenantMiddleware.cs — Extracts the subdomain from the host and sets it as the tenant ID. One-liner registration in Program.cs.
+  </aside>
+</section>
+
+</section>

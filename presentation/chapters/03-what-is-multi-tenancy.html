@@ -1,0 +1,175 @@
+<!-- Chapter 3: What is multi-tenancy? -->
+<section data-name="What is Multi-Tenancy?">
+
+<!-- ==================== SLIDE 5: Section Header - What is multi tenancy? ==================== -->
+<section class="section-header" data-background-color="#003865">
+  <h1>What is multi tenancy?</h1>
+</section>
+
+<!-- ==================== SLIDE 6: Definition ==================== -->
+<section>
+  <h2>What is it?</h2>
+  <p>Running your software for multiple clients<br>(aka <strong>tenants</strong>) at once</p>
+</section>
+
+<!-- ==================== SLIDE 7: Not all equal ==================== -->
+<section>
+  <h2>Not all Multi-tenancy is equal</h2>
+  <p>What do you think is possible?</p>
+</section>
+
+<section>
+  <img src="images/multi-tenancy-overview-1.png" alt="Multi-tenancy overview" class="r-stretch" />
+</section>
+
+<section>
+  <img src="images/multi-tenancy-overview-2.png" alt="Multi-tenancy overview" class="r-stretch" />
+</section>
+
+<!-- ==================== SLIDE 10: Multi-tenancy by infrastructure ==================== -->
+<section>
+  <h2>Multi-tenancy by infrastructure</h2>
+  <div style="display: flex; gap: 2em; align-items: start;">
+    <div style="flex: 1;">
+      <ul>
+        <li class="fragment fade-in">&#x2705; App has no knowledge of tenants</li>
+        <li class="fragment fade-in">&#x2705; Data is perfectly separated</li>
+        <li class="fragment fade-in">&#x274C; Cross-cutting concerns are harder</li>
+        <li class="fragment fade-in">&#x274C; High cost of operation</li>
+        <li class="fragment fade-in">&#x274C; Cross tenant reporting</li>
+      </ul>
+    </div>
+    <div style="flex: 1;">
+      <div class="mermaid" style="max-height: 55vh; overflow: hidden;">
+        %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
+graph TD
+    RP{{"Reverse Proxy"}} --> A1[App 1]
+    RP --> A2[App 2]
+    RP --> A3[App 3]
+    A1 --> D1[(DB 1)]
+    A2 --> D2[(DB 2)]
+    A3 --> D3[(DB 3)]
+    style RP fill:#00A3E0,stroke:#003865,color:#fff
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    Each tenant gets their own full infrastructure - servers, databases, everything.
+    Maximum isolation but highest cost.s
+  </aside>
+</section>
+
+<!-- ==================== SLIDE 12: Database per tenant ==================== -->
+<section>
+  <h2>Database per tenant</h2>
+  <div style="display: flex; gap: 2em; align-items: start;">
+    <div style="flex: 1;">
+      <ul>
+        <li class="fragment fade-in">&#x2705; Data is perfectly separated</li>
+        <li class="fragment fade-in">&#x1F4AD; App needs config per tenant</li>
+        <li class="fragment fade-in">&#x274C; (still) high cost of operation</li>
+        <li class="fragment fade-in">&#x274C; Data consistency between tenants</li>
+        <li class="fragment fade-in">&#x274C; Cross tenant reporting</li>
+      </ul>
+    </div>
+    <div style="flex: 1;">
+      <div class="mermaid" style="max-height: 55vh; overflow: hidden;">
+        %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
+graph TD
+    APP[Shared Application] --> DBA[(DB Tenant A)]
+    APP --> DBB[(DB Tenant B)]
+    APP --> DBC[(DB Tenant C)]
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    One application deployment but each tenant gets their own database.
+    Good data separation but still expensive to manage many databases.
+  </aside>
+</section>
+
+
+<!-- ==================== SLIDE 14: Schema per tenant ==================== -->
+<section>
+  <h2>Schema per tenant</h2>
+  <div style="display: flex; gap: 2em; align-items: start;">
+    <div style="flex: 1;">
+      <ul>
+        <li class="fragment fade-in">&#x2705; Data is mostly separate</li>
+        <li class="fragment fade-in">&#x2705; Lower operation cost</li>
+        <li class="fragment fade-in">&#x2705; Cross-tenant reporting is possible</li>
+        <li class="fragment fade-in">&#x1F4AD; App needs config per tenant</li>
+        <li class="fragment fade-in">&#x274C; Noisy neighbors</li>
+      </ul>
+    </div>
+    <div style="flex: 1;">
+      <div class="mermaid" style="max-height: 55vh; overflow: hidden;">
+        %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
+graph TD
+    APP[Shared Application] --> DB[(Shared Database)]
+    DB --> SA["Schema A<br/>tenant_a.*"]
+    DB --> SB["Schema B<br/>tenant_b.*"]
+    DB --> SC["Schema C<br/>tenant_c.*"]
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    Single database with separate schemas per tenant. Good balance of isolation and cost.
+    Cross-tenant reporting becomes possible since data is in the same DB.
+  </aside>
+</section>
+
+<!-- ==================== SLIDE 16: Discriminator column ==================== -->
+<section>
+  <h2>Discriminator column</h2>
+  <div style="display: flex; gap: 2em; align-items: start;">
+    <div style="flex: 1;">
+      <ul>
+        <li class="fragment fade-in">&#x2705; Lower operation cost</li>
+        <li class="fragment fade-in">&#x2705; Cross-tenant reporting is possible</li>
+        <li class="fragment fade-in">&#x2705; Easy to set up</li>
+        <li class="fragment fade-in">&#x2705; Easy to understand</li>
+        <li class="fragment fade-in">&#x1F4AD; App needs config per tenant</li>
+        <li class="fragment fade-in">&#x274C; Noisy neighbors</li>
+        <li class="fragment fade-in">&#x26A0;&#xFE0F; Risk leaky tenant data</li>
+      </ul>
+    </div>
+    <div style="flex: 1;">
+      <div class="mermaid" style="max-height: 55vh; overflow: hidden;">
+        %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
+graph TD
+    APP[Shared Application] --> DB[(Shared Database)]
+    DB --> T["Shared Table"]
+    T --> R1["A, Alice, ..."]
+    T --> R2["B, Bob, ..."]
+    T --> R3["A, Charlie, ..."]
+    T --> R4["C, Diana, ..."]
+    style T fill:#fff3e0,stroke:#e67e22
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    Simplest approach - all data in same tables with a TenantId column.
+    Cheapest to run but highest risk of data leakage if you forget a WHERE clause.
+  </aside>
+</section>
+
+<!-- ==================== SLIDE 18: Best one? ==================== -->
+<section>
+  <h2>Best one?</h2>
+  <aside class="notes">
+    Pause and let the audience think about which approach is best.
+  </aside>
+</section>
+
+<!-- ==================== SLIDE 19: It depends ==================== -->
+<section>
+  <h1 class="r-fit-text">It depends</h1>
+  <p style="font-size: 3em;">&#x1F937;</p>
+  <aside class="notes">
+    There is no single best approach - it depends on your requirements for isolation,
+    cost, complexity, compliance, and scale.
+  </aside>
+</section>
+
+</section>
