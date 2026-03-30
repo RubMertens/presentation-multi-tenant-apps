@@ -56,128 +56,69 @@ http://customer1.my-website.com/page
 <!-- Slide: What is middleware? -->
 <section>
   <h2>What is middleware?</h2>
-  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25em; font-size: 0.65em;">
+  <div class="mermaid" style="max-height: 55vh; overflow: hidden;">
+  %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px', 'actorBkg': '#E8F4FD', 'actorBorder': '#003865', 'actorTextColor': '#003865', 'signalColor': '#00A3E0', 'signalTextColor': '#003865', 'noteBkgColor': '#BED62F', 'noteTextColor': '#003865', 'noteBorderColor': '#003865', 'activationBkgColor': '#E8F4FD', 'activationBorderColor': '#003865'}}}%%
+  sequenceDiagram
+    participant C as Client
+    participant H as HttpsRedirection
+    participant T as TenantMiddleware
+    participant R as Routing
+    participant A as Authorization
+    participant P as Razor Pages
 
-    <!-- Request coming in -->
-    <div class="fragment fade-in" data-fragment-index="1" style="background: #00A3E0; color: white; padding: 0.35em 1.5em; border-radius: 8px; font-weight: bold;">
-      HTTP Request &rarr; customer1.my-website.com
-    </div>
-
-    <div class="fragment fade-in" data-fragment-index="2" style="color: #00A3E0; font-size: 1.4em; line-height: 1;">&#8595;</div>
-
-    <!-- HttpsRedirection -->
-    <div class="fragment highlight-current-blue" data-fragment-index="2" style="background: #F0F7FC; border: 2px solid #003865; padding: 0.35em 2em; border-radius: 8px; width: 80%; text-align: center;">
-      <strong>HttpsRedirection</strong>
-      <div style="font-size: 0.8em; color: #666;">Redirect HTTP &rarr; HTTPS</div>
-    </div>
-
-    <div class="fragment fade-in" data-fragment-index="3" style="color: #00A3E0; font-size: 1.4em; line-height: 1;">&#8595;</div>
-
-    <!-- TenantMiddleware - visually distinct -->
-    <div class="fragment highlight-current-blue" data-fragment-index="3" style="background: #E8F4FD; border: 3px solid #00A3E0; padding: 0.35em 2em; border-radius: 8px; width: 80%; text-align: center; box-shadow: 0 0 12px rgba(0,163,224,0.3);">
-      <strong style="color: #003865;">&#127919; TenantMiddleware</strong>
-      <div style="font-size: 0.8em; color: #666;">Extract subdomain &rarr; Lookup tenant &rarr; Set context</div>
-    </div>
-
-    <div class="fragment fade-in" data-fragment-index="4" style="color: #00A3E0; font-size: 1.4em; line-height: 1;">&#8595;</div>
-
-    <!-- Routing -->
-    <div class="fragment highlight-current-blue" data-fragment-index="4" style="background: #F0F7FC; border: 2px solid #003865; padding: 0.35em 2em; border-radius: 8px; width: 80%; text-align: center;">
-      <strong>Routing</strong>
-      <div style="font-size: 0.8em; color: #666;">Match URL to endpoint</div>
-    </div>
-
-    <div class="fragment fade-in" data-fragment-index="5" style="color: #00A3E0; font-size: 1.4em; line-height: 1;">&#8595;</div>
-
-    <!-- Authorization -->
-    <div class="fragment highlight-current-blue" data-fragment-index="5" style="background: #F0F7FC; border: 2px solid #003865; padding: 0.35em 2em; border-radius: 8px; width: 80%; text-align: center;">
-      <strong>Authorization</strong>
-      <div style="font-size: 0.8em; color: #666;">Check permissions</div>
-    </div>
-
-    <div class="fragment fade-in" data-fragment-index="6" style="color: #00A3E0; font-size: 1.4em; line-height: 1;">&#8595;</div>
-
-    <!-- Razor Pages -->
-    <div class="fragment highlight-current-blue" data-fragment-index="6" style="background: #F0F7FC; border: 2px solid #003865; padding: 0.35em 2em; border-radius: 8px; width: 80%; text-align: center;">
-      <strong>Razor Pages</strong>
-      <div style="font-size: 0.8em; color: #666;">Handle request &rarr; Generate response</div>
-    </div>
-
-    <!-- Response flowing back up -->
-    <div class="fragment fade-in" data-fragment-index="7" style="color: #BED62F; font-size: 1.2em; font-weight: bold; margin-top: 0.3em;">&#8593; Response flows back up &#8593;</div>
+    C->>H: HTTP Request
+    activate H
+    H->>T: next()
+    activate T
+    Note over T: Extract subdomain<br/>Lookup tenant<br/>Set context
+    T->>R: next()
+    activate R
+    R->>A: next()
+    activate A
+    A->>P: next()
+    activate P
+    P-->>A: Response
+    deactivate P
+    A-->>R: Response
+    deactivate A
+    R-->>T: Response
+    deactivate R
+    T-->>H: Response
+    deactivate T
+    H-->>C: Response
+    deactivate H
   </div>
-
   <aside class="notes">
-    Click through to show the request flowing through each middleware step.
-    The TenantMiddleware is highlighted as our custom addition to the pipeline.
-    Each middleware calls next() to pass the request along, then the response flows back up through the same chain.
+    The request flows through each middleware in order. Each middleware calls next() to pass the request along, then the response flows back through the same chain in reverse. TenantMiddleware is our custom addition.
   </aside>
 </section>
 
 <!-- Slide: TenantMiddleware flow -->
 <section>
   <h2>TenantMiddleware in action</h2>
-  <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25em; font-size: 0.6em;">
+  <div class="mermaid" style="max-height: 55vh; overflow: hidden;">
+    %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
+    flowchart TD
+      A["HTTP Request\ncustomer1.my-website.com"] --> B["Extract subdomain"]
+      B --> C["Lookup tenant"]
+      C --> D{"Tenant found?"}
+      D -- "No" --> E["404 Not Found"]
+      D -- "Yes" --> F["Set TenantContext"]
+      F --> G["next(context)"]
 
-    <!-- Incoming Request -->
-    <div class="fragment fade-in" data-fragment-index="1" style="background: #00A3E0; color: white; padding: 0.35em 1.5em; border-radius: 8px; font-weight: bold;">
-      Incoming Request &rarr; customer1.my-website.com/page
-    </div>
-
-    <div class="fragment fade-in" data-fragment-index="2" style="color: #00A3E0; font-size: 1.4em; line-height: 1;">&#8595;</div>
-
-    <!-- Extract subdomain -->
-    <div class="fragment highlight-current-blue" data-fragment-index="2" style="background: #E8F4FD; border: 2px solid #003865; padding: 0.35em 2em; border-radius: 8px; width: 80%; text-align: center;">
-      <strong>Extract subdomain</strong>
-      <div style="font-size: 0.8em; color: #666;">Host.Split('.')[0]</div>
-    </div>
-
-    <div class="fragment fade-in" data-fragment-index="3" style="color: #00A3E0; font-size: 1.4em; line-height: 1;">&#8595;</div>
-
-    <!-- Lookup tenant -->
-    <div class="fragment highlight-current-blue" data-fragment-index="3" style="background: #E8F4FD; border: 2px solid #003865; padding: 0.35em 2em; border-radius: 8px; width: 80%; text-align: center;">
-      <strong>Lookup in AvailableTenants config</strong>
-    </div>
-
-    <div class="fragment fade-in" data-fragment-index="4" style="color: #00A3E0; font-size: 1.4em; line-height: 1;">&#8595;</div>
-
-    <!-- Decision: Tenant found? -->
-    <div class="fragment highlight-current-blue" data-fragment-index="4" style="background: #fff; border: 3px solid #003865; padding: 0.35em 2em; border-radius: 8px; width: 60%; text-align: center; transform: rotate(0deg);">
-      <strong style="color: #003865;">Tenant found?</strong>
-    </div>
-
-    <!-- Branch: No and Yes side by side -->
-    <div class="fragment fade-in" data-fragment-index="5" style="display: flex; justify-content: center; gap: 2em; width: 90%; margin-top: 0.2em;">
-      <!-- No branch -->
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25em; flex: 1;">
-        <div style="color: #e74c3c; font-size: 1.2em; font-weight: bold;">&#8595; No</div>
-        <div style="background: #fce4ec; border: 2px solid #e74c3c; color: #c0392b; padding: 0.35em 1.5em; border-radius: 8px; text-align: center; width: 100%; font-weight: bold;">
-          Return 404<br/>Not Found
-        </div>
-      </div>
-      <!-- Yes branch -->
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25em; flex: 1;">
-        <div style="color: #00A3E0; font-size: 1.2em; font-weight: bold;">&#8595; Yes</div>
-        <div style="background: #E8F4FD; border: 2px solid #003865; padding: 0.35em 1.5em; border-radius: 8px; text-align: center; width: 100%;">
-          <strong>Set tenantContext.Tenant</strong>
-        </div>
-      </div>
-    </div>
-
-    <!-- Arrow to continue pipeline (under Yes branch) -->
-    <div class="fragment fade-in" data-fragment-index="6" style="display: flex; flex-direction: column; align-items: center; gap: 0.25em; margin-left: 12em;">
-      <div style="color: #00A3E0; font-size: 1.4em; line-height: 1;">&#8595;</div>
-      <div style="background: #E8F4FD; border: 2px solid #003865; padding: 0.35em 1.5em; border-radius: 8px; text-align: center;">
-        <strong>Call next(context)</strong>
-        <div style="font-size: 0.8em; color: #666;">Continue pipeline</div>
-      </div>
-    </div>
-
+      style A fill:#00A3E0,stroke:#003865,color:#fff
+      style B fill:#E8F4FD,stroke:#003865
+      style C fill:#E8F4FD,stroke:#003865
+      style D stroke:#003865,stroke-width:2px
+      style E fill:#fce4ec,stroke:#e74c3c,color:#c0392b
+      style F fill:#E8F4FD,stroke:#003865
+      style G fill:#E8F4FD,stroke:#003865
   </div>
   <aside class="notes">
-    Click through to animate the TenantMiddleware flow step by step.
-    The middleware extracts the subdomain, looks it up in the configured tenants,
-    and either rejects with 404 or sets the tenant context for downstream middleware and pages.
+    The TenantMiddleware extracts the first segment of the hostname as the subdomain,
+    looks it up in the configured AvailableTenants list (from IOptionsSnapshot),
+    and either returns a 404 if no matching tenant is found, or sets the TenantContext
+    and calls next() to continue the pipeline through Routing, Authorization, and Razor Pages.
   </aside>
 </section>
 

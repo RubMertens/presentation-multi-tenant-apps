@@ -19,11 +19,11 @@
 </section>
 
 <section>
-  <img src="images/multi-tenancy-overview-1.png" alt="Multi-tenancy overview" style="max-height: 70vh;" />
+  <img src="images/multi-tenancy-overview-1.png" alt="Multi-tenancy overview" class="r-stretch" />
 </section>
 
 <section>
-  <img src="images/multi-tenancy-overview-2.png" alt="Multi-tenancy overview" style="max-height: 70vh;" />
+  <img src="images/multi-tenancy-overview-2.png" alt="Multi-tenancy overview" class="r-stretch" />
 </section>
 
 <!-- ==================== SLIDE 10: Multi-tenancy by infrastructure ==================== -->
@@ -40,7 +40,8 @@
       </ul>
     </div>
     <div style="flex: 1;">
-      <div class="mermaid">
+      <div class="mermaid" style="max-height: 55vh; overflow: hidden;">
+        %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
 graph TD
     RP{{"Reverse Proxy"}} --> A1[App 1]
     RP --> A2[App 2]
@@ -72,7 +73,8 @@ graph TD
       </ul>
     </div>
     <div style="flex: 1;">
-      <div class="mermaid">
+      <div class="mermaid" style="max-height: 55vh; overflow: hidden;">
+        %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
 graph TD
     APP[Shared Application] --> DBA[(DB Tenant A)]
     APP --> DBB[(DB Tenant B)]
@@ -101,7 +103,8 @@ graph TD
       </ul>
     </div>
     <div style="flex: 1;">
-      <div class="mermaid">
+      <div class="mermaid" style="max-height: 55vh; overflow: hidden;">
+        %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
 graph TD
     APP[Shared Application] --> DB[(Shared Database)]
     DB --> SA["Schema A<br/>tenant_a.*"]
@@ -132,14 +135,15 @@ graph TD
       </ul>
     </div>
     <div style="flex: 1;">
-      <div class="mermaid">
+      <div class="mermaid" style="max-height: 55vh; overflow: hidden;">
+        %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
 graph TD
     APP[Shared Application] --> DB[(Shared Database)]
     DB --> T["Shared Table"]
-    T --> R1["TenantId=A, Alice, ..."]
-    T --> R2["TenantId=B, Bob, ..."]
-    T --> R3["TenantId=A, Charlie, ..."]
-    T --> R4["TenantId=C, Diana, ..."]
+    T --> R1["A, Alice, ..."]
+    T --> R2["B, Bob, ..."]
+    T --> R3["A, Charlie, ..."]
+    T --> R4["C, Diana, ..."]
     style T fill:#fff3e0,stroke:#e67e22
       </div>
     </div>
