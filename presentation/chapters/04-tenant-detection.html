@@ -70,7 +70,7 @@ http://customer1.my-website.com/page
     activate H
     H->>T: next()
     activate T
-    Note over T: Extract subdomain<br/>Lookup tenant<br/>Set context
+    Note over T: Extract tenant<br/>Lookup tenant<br/>Set context
     T->>R: next()
     activate R
     R->>A: next()
@@ -90,35 +90,6 @@ http://customer1.my-website.com/page
   </div>
   <aside class="notes">
     The request flows through each middleware in order. Each middleware calls next() to pass the request along, then the response flows back through the same chain in reverse. TenantMiddleware is our custom addition.
-  </aside>
-</section>
-
-<!-- Slide: TenantMiddleware flow -->
-<section>
-  <h2>TenantMiddleware in action</h2>
-  <div class="mermaid" style="max-height: 55vh; overflow: hidden;">
-    %%{init: {'theme': 'base', 'themeVariables': {'fontSize': '14px'}}}%%
-    flowchart TD
-      A["HTTP Request\ncustomer1.my-website.com"] --> B["Extract subdomain"]
-      B --> C["Lookup tenant"]
-      C --> D{"Tenant found?"}
-      D -- "No" --> E["404 Not Found"]
-      D -- "Yes" --> F["Set TenantContext"]
-      F --> G["next(context)"]
-
-      style A fill:#00A3E0,stroke:#003865,color:#fff
-      style B fill:#E8F4FD,stroke:#003865
-      style C fill:#E8F4FD,stroke:#003865
-      style D stroke:#003865,stroke-width:2px
-      style E fill:#fce4ec,stroke:#e74c3c,color:#c0392b
-      style F fill:#E8F4FD,stroke:#003865
-      style G fill:#E8F4FD,stroke:#003865
-  </div>
-  <aside class="notes">
-    The TenantMiddleware extracts the first segment of the hostname as the subdomain,
-    looks it up in the configured AvailableTenants list (from IOptionsSnapshot),
-    and either returns a 404 if no matching tenant is found, or sets the TenantContext
-    and calls next() to continue the pipeline through Routing, Authorization, and Razor Pages.
   </aside>
 </section>
 
